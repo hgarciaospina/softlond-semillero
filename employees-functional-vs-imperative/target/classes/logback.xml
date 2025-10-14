@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- =======================================================
+         🎨 COLOR LEGEND (ANSI)
+         =======================================================
+         %black, %red, %green, %yellow, %blue, %magenta, %cyan, %white
+         %bold, %highlight
+         ======================================================= -->
+
+    <!-- Define general pattern with timestamp, level, and message -->
+    <property name="LOG_PATTERN"
+              value="%highlight(%-5level) %cyan(%date{HH:mm:ss}) [%magenta(%logger{15})] %msg%n"/>
+
+    <!-- =====================================
+         🟡 Main logger (titles & sections)
+         ===================================== -->
+    <appender name="CONSOLE_MAIN" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%yellow(%-5level) %boldYellow(%date{HH:mm:ss}) [%boldMagenta(%logger{15})] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- =====================================
+         💙 Functional logger (blue outputs)
+         ===================================== -->
+    <appender name="CONSOLE_FUNCTIONAL" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%blue(%-5level) %cyan(%date{HH:mm:ss}) [%blue(%logger{15})] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- =====================================
+         💚 Imperative logger (green outputs)
+         ===================================== -->
+    <appender name="CONSOLE_IMPERATIVE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%green(%-5level) %cyan(%date{HH:mm:ss}) [%green(%logger{15})] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- =========================
+         ROOT LOGGER (default)
+         ========================= -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE_MAIN"/>
+    </root>
+
+    <!-- =========================
+         NAMED LOGGERS
+         ========================= -->
+    <logger name="functional" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE_FUNCTIONAL"/>
+    </logger>
+
+    <logger name="imperative" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE_IMPERATIVE"/>
+    </logger>
+
+    <!-- For main titles and warnings -->
+    <logger name="com.example.employees.MainApp" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE_MAIN"/>
+    </logger>
+
+</configuration>
