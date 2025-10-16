@@ -1,6 +1,5 @@
 import clase01.FakerUtils;
 import clase01.Persona;
-import clase01.comparators.ComparadorPorLongitudDeNombre;
 
 import java.util.ArrayList;
 import java.util.List;
