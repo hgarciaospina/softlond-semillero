@@ -1,10 +1,11 @@
+/* CLASE 01 */
 import clase01.FakerUtils;
 import clase01.Persona;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main {
+public class MainComparator {
     public static void main(String[] args) {
         List<Persona> listaPersonas = generarPersonas(100);
         listaPersonas.add(new Persona("Lo", "Hidalgo"));

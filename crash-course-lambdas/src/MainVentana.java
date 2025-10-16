@@ -1,3 +1,4 @@
+/* CLASE 02 */
 import clase02.Ventana;
 
 public class MainVentana {
