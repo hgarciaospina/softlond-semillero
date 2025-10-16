@@ -1,0 +1,39 @@
+1. Análisis de Paradigmas: Describe con tus palabras la diferencia
+   entre un enfoque imperativo y uno declarativo para calcular el
+   salario promedio de los empleados del área de "TI".
+
+   Análisis de Paradigmas
+   🔹 Enfoque imperativo
+
+   En el paradigma imperativo, el programador indica paso a paso cómo se deben realizar las operaciones para obtener el resultado.
+   El énfasis está en el cómo lograr el objetivo.
+
+   Por ejemplo, para calcular el salario promedio de los empleados del área de "TI", en un enfoque imperativo (como en Java tradicional) se escribiría algo así:
+
+   double suma = 0;
+   int contador = 0;
+   for (Empleado e : empleados) {
+       if (e.getArea().equals("TI")) {
+           suma += e.getSalario();
+           contador++;
+       }
+   }
+   double promedio = contador > 0 ? suma / contador : 0;
+
+
+   👉 Aquí se detalla cómo recorrer la lista, cómo acumular los salarios, y cómo dividir al final.
+   El control del flujo (bucles, condiciones, acumuladores) lo maneja el programador.
+
+   🔹 Enfoque declarativo
+
+   En el paradigma declarativo, el programador indica qué desea obtener, no cómo se debe hacer.
+   El énfasis está en el qué se quiere lograr, dejando que el lenguaje o motor de ejecución gestione los pasos internos.
+
+   Por ejemplo:
+
+   double promedio = empleados.stream()
+       .filter(e -> e.getArea().equals("TI"))
+       .mapToDouble(Empleado::getSalario)
+       .average()
+       .orElse(0);
+
