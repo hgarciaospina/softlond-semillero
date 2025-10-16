@@ -13,5 +13,5 @@ import modelo.Empleado;
  */
 @FunctionalInterface
 public interface TransformacionEmpleado<T> {
-    T aplicar(Empleado empleado);
+    String aplicar(Empleado empleado);
 }

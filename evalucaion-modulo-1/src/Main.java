@@ -3,7 +3,6 @@ import repositorio.EmpleadoRepository;
 import servicios.*;
 
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 
 /**
  * Demostración de programación funcional e inmutabilidad aplicada al dominio Empleado.
