@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de Formación: Lambdas y Method References</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #3f3c3a;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        
+        .code-block {
+            background-color: #2c2a29;
+            color: #f8f8f2;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            white-space: pre;
+        }
+        .code-comment { color: #9ca3af; }
+        .code-keyword { color: #c678dd; }
+        .code-string { color: #98c379; }
+        .code-function { color: #61afef; }
+        .code-type { color: #e5c07b; }
+
+        .info-box {
+            background-color: #F8F5F1;
+            border-left: 4px solid #BFB8AE;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0.25rem;
+        }
+        .success-box {
+            background-color: #f0fdf4;
+            border-left: 4px solid #22c55e;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0.25rem;
+        }
+        .warning-box {
+            background-color: #fefce8;
+            border-left: 4px solid #eab308;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0.25rem;
+        }
+        .tip-box {
+            background-color: #fdf2f8;
+            border-left: 4px solid #db2777;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0.25rem;
+        }
+        .tab-button.active {
+            background-color: #BFB8AE;
+            color: white;
+            font-weight: 700;
+        }
+        .content-panel h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c2a29;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #EAE6E1;
+        }
+         .content-panel h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #3f3c3a;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .evaluation-point {
+            margin-top: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed #EAE6E1;
+        }
+        .evaluation-point strong {
+            color: #2c2a29;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#2c2a29] tracking-tight">Lambdas y Method References</h1>
+            <p class="mt-4 text-lg md:text-xl text-[#6e6a67] max-w-3xl mx-auto">Guía Completa para Desarrolladores: De la Sintaxis a la Aplicación Práctica.</p>
+        </header>
+
+        <main class="bg-white rounded-xl shadow-md border border-gray-200/80 overflow-hidden">
+            <div class="md:grid md:grid-cols-12">
+                <!-- Mobile Dropdown -->
+                <div class="md:hidden p-4 border-b border-gray-200">
+                    <label for="class-select" class="sr-only">Seleccionar Sección</label>
+                    <select id="class-select" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </select>
+                </div>
+
+                <!-- Desktop Vertical Tabs -->
+                <aside class="hidden md:block md:col-span-4 lg:col-span-3 p-4 border-r border-gray-200 bg-[#F8F5F1]">
+                    <h3 class="text-lg font-bold text-[#2c2a29] mb-4">Índice del Tema</h3>
+                    <nav id="tab-navigation" class="space-y-2">
+                        <!-- Tabs will be injected here by JS -->
+                    </nav>
+                </aside>
+
+                <!-- Content Area -->
+                <div id="content-area" class="md:col-span-8 lg:col-span-9 p-6 md:p-8 overflow-y-auto" style="max-height: 80vh;">
+                    <!-- Content panels will be injected here by JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const modulesData = [
+            {
+                id: 1,
+                title: "Introducción",
+                mentoring: "Una lambda es simplemente una función anónima, un atajo para escribir bloques de código de forma más clara y concisa. Son la puerta de entrada a la programación funcional en Java.",
+                content: `
+                    <div class="info-box">
+                        <p><strong>📖 Definición Simple:</strong> Una lambda es una <strong>función anónima</strong> (sin nombre) que te permite escribir código de forma más corta y clara. Es como un atajo para escribir funciones pequeñas.</p>
+                    </div>
+
+                    <h3>✨ ¿Por qué son importantes?</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="border border-red-200 bg-red-50/50 p-4 rounded-lg">
+                            <h4 class="text-red-700 font-bold">❌ Antes (Verboso)</h4>
+                            <pre class="code-block"><code class="language-java"><span class="code-comment">// import java.util.Arrays;</span>
+<span class="code-comment">// import java.util.List;</span>
+List&lt;<span class="code-type">String</span>&gt; nombres = Arrays.asList("Ana", "Juan", "Carlos");
+<span class="code-keyword">for</span> (<span class="code-type">String</span> nombre : nombres) {
+    System.out.println(nombre);
+}</code></pre>
+                        </div>
+                        <div class="border border-green-200 bg-green-50/50 p-4 rounded-lg">
+                            <h4 class="text-green-700 font-bold">✅ Ahora (Conciso)</h4>
+                            <pre class="code-block"><code class="language-java"><span class="code-comment">// import java.util.Arrays;</span>
+<span class="code-comment">// import java.util.List;</span>
+List&lt;<span class="code-type">String</span>&gt; nombres = Arrays.asList("Ana", "Juan", "Carlos");
+nombres.<span class="code-function">forEach</span>(nombre -> 
+    System.out.println(nombre));</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="success-box">
+                        <strong>🎉 Beneficios Clave:</strong>
+                        <ul class="list-disc list-inside mt-2">
+                            <li><strong>Menos código:</strong> Escribe menos, logra más.</li>
+                            <li><strong>Más legible:</strong> El código es más fácil de entender.</li>
+                            <li><strong>Moderno:</strong> Sigue las mejores prácticas actuales.</li>
+                            <li><strong>Funcional:</strong> Permite un estilo de programación funcional en Java.</li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                id: 2,
+                title: "Anatomía de una Lambda",
+                mentoring: "Entender la estructura de una lambda es clave. Se compone de tres partes: los parámetros de entrada, el operador flecha y el cuerpo de la expresión.",
+                content: `
+                    <h3>🔍 Estructura Básica</h3>
+                    <pre class="code-block"><code class="language-java"><span class="code-comment">// Estructura: (parámetros) -> expresión</span>
+(nombre) -> System.out.println(nombre)
+   ⬇️        ⬇️          ⬇️
+ entrada   flecha     cuerpo
+</code></pre>
+                    <h3>📊 Comparación Completa</h3>
+                    <p>Veamos la diferencia al ordenar una lista de cadenas por su longitud.</p>
+                     <div class="grid md:grid-cols-2 gap-6 mt-4">
+                        <div class="border border-red-200 bg-red-50/50 p-4 rounded-lg">
+                            <h4 class="text-red-700 font-bold">❌ Forma Tradicional (Clase Anónima)</h4>
+                            <pre class="code-block"><code class="language-java"><span class="code-comment">// ¡7 líneas de código!</span>
+Collections.<span class="code-function">sort</span>(nombres, <span class="code-keyword">new</span> <span class="code-type">Comparator</span>&lt;<span class="code-type">String</span>&gt;() {
+    <span class="code-keyword">@Override</span>
+    <span class="code-keyword">public int</span> <span class="code-function">compare</span>(<span class="code-type">String</span> a, <span class="code-type">String</span> b) {
+        <span class="code-keyword">return</span> a.<span class="code-function">length</span>() - b.<span class="code-function">length</span>();
+    }
+});</code></pre>
+                        </div>
+                        <div class="border border-green-200 bg-green-50/50 p-4 rounded-lg">
+                            <h4 class="text-green-700 font-bold">✅ Con Lambda</h4>
+                            <pre class="code-block"><code class="language-java"><span class="code-comment">// ¡Solo 1 línea!</span>
+Collections.<span class="code-function">sort</span>(nombres,
+    (a, b) -> a.<span class="code-function">length</span>() - b.<span class="code-function">length</span>()
+);</code></pre>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 3,
+                title: "Sintaxis",
+                mentoring: "La sintaxis de las lambdas es flexible. Puedes omitir paréntesis con un solo parámetro y llaves para una sola expresión. La clave es la simplicidad.",
+                content: `
+                    <div class="info-box">
+                        <h4>🎓 Las 4 Formas de Escribir Lambdas</h4>
+
+                        <h4 class="mt-4">1️⃣ Sin Parámetros</h4>
+                        <pre class="code-block"><code class="language-java"><span class="code-comment">// Usa paréntesis vacíos</span>
+<span class="code-type">Runnable</span> saludar = () -> System.out.println(<span class="code-string">"¡Hola!"</span>);</code></pre>
+
+                        <h4 class="mt-4">2️⃣ Un Parámetro</h4>
+                        <pre class="code-block"><code class="language-java"><span class="code-comment">// Sin paréntesis (más común y limpio) ✅</span>
+<span class="code-type">Consumer</span>&lt;<span class="code-type">String</span>&gt; imprimir = texto -> System.out.println(texto);</code></pre>
+
+                        <h4 class="mt-4">3️⃣ Múltiples Parámetros</h4>
+                        <pre class="code-block"><code class="language-java"><span class="code-comment">// Paréntesis OBLIGATORIOS con 2+ parámetros</span>
+<span class="code-type">BiFunction</span>&lt;<span class="code-type">Integer</span>, <span class="code-type">Integer</span>, <span class="code-type">Integer</span>&gt; sumar = (a, b) -> a + b;</code></pre>
+
+                        <h4 class="mt-4">4️⃣ Con Bloque de Código</h4>
+                        <pre class="code-block"><code class="language-java"><span class="code-comment">// Múltiples líneas = necesitas llaves { } y 'return' explícito</span>
+<span class="code-type">BiFunction</span>&lt;<span class="code-type">Integer</span>, <span class="code-type">Integer</span>, <span class="code-type">Integer</span>&gt; dividir = (a, b) -> {
+    <span class="code-keyword">if</span> (b == 0) {
+        <span class="code-keyword">return</span> 0;
+    }
+    <span class="code-keyword">return</span> a / b;  <span class="code-comment">// return es OBLIGATORIO aquí</span>
+};</code></pre>
+                    </div>
+                     <div class="warning-box">
+                        <strong>⚠️ Reglas Importantes:</strong>
+                        <ul class="list-disc list-inside mt-2">
+                            <li>Con <strong>una sola línea</strong>: el <code>return</code> es <strong>automático</strong>.</li>
+                            <li>Con <strong>llaves { }</strong>: debes usar <code>return</code> <strong>explícitamente</strong>.</li>
+                            <li>Los tipos de parámetros son <strong>opcionales</strong> (Java los infiere).</li>
+                            <li>Los paréntesis son opcionales <strong>solo con 1 parámetro</strong>.</li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                id: 4,
+                title: "Interfaces Funcionales",
+                mentoring: "Una interfaz funcional es el 'contrato' que una lambda debe cumplir. Es una interfaz con un único método abstracto. Java provee un conjunto estándar muy útil en `java.util.function`.",
+                content: `
+                    <div class="info-box">
+                        <p><strong>📚 ¿Qué es una Interfaz Funcional?</strong> Es una interfaz con <strong>UN SOLO</strong> método abstracto (SAM - Single Abstract Method). Las lambdas son una forma corta de implementar estas interfaces. La anotación <code>@FunctionalInterface</code> es opcional pero recomendada para que el compilador verifique esta regla.</p>
+                    </div>
+                    <h3>🔧 Interfaces Funcionales Más Utilizadas</h3>
+                    <p>El paquete <code>java.util.function</code> provee un conjunto de interfaces genéricas para cubrir los casos de uso más comunes. Dominar las siguientes te dará una base sólida para la programación funcional.</p>
+                    <div class="overflow-x-auto mt-4">
+                        <table class="min-w-full bg-white border border-gray-200 text-sm">
+                            <thead class="bg-[#F8F5F1]">
+                                <tr>
+                                    <th class="py-2 px-4 border-b text-left font-bold">Interfaz</th>
+                                    <th class="py-2 px-4 border-b text-left">Recibe</th>
+                                    <th class="py-2 px-4 border-b text-left">Devuelve</th>
+                                    <th class="py-2 px-4 border-b text-left">Uso Común</th>
+                                    <th class="py-2 px-4 border-b text-left">Ejemplo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-4 border-b font-mono"><strong>Predicate&lt;T&gt;</strong></td>
+                                    <td class="py-2 px-4 border-b font-mono">T</td>
+                                    <td class="py-2 px-4 border-b font-mono">boolean</td>
+                                    <td class="py-2 px-4 border-b">Filtrar colecciones, validaciones.</td>
+                                    <td class="py-2 px-4 border-b font-mono text-xs"><code>n -> n > 10</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b font-mono"><strong>Function&lt;T, R&gt;</strong></td>
+                                    <td class="py-2 px-4 border-b font-mono">T</td>
+                                    <td class="py-2 px-4 border-b font-mono">R</td>
+                                    <td class="py-2 px-4 border-b">Transformar/mapear un objeto a otro.</td>
+                                    <td class="py-2 px-4 border-b font-mono text-xs"><code>s -> s.length()</code></td>
+                                </tr>
+                                 <tr>
+                                    <td class="py-2 px-4 border-b font-mono"><strong>Consumer&lt;T&gt;</strong></td>
+                                    <td class="py-2 px-4 border-b font-mono">T</td>
+                                    <td class="py-2 px-4 border-b font-mono">void</td>
+                                    <td class="py-2 px-4 border-b">Ejecutar una acción con un objeto, sin retorno.</td>
+                                    <td class="py-2 px-4 border-b font-mono text-xs"><code>s -> System.out.println(s)</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b font-mono"><strong>Supplier&lt;T&gt;</strong></td>
+                                    <td class="py-2 px-4 border-b font-mono">(nada)</td>
+                                    <td class="py-2 px-4 border-b font-mono">T</td>
+                                    <td class="py-2 px-4 border-b">Crear/proveer objetos, valores por defecto.</td>
+                                    <td class="py-2 px-4 border-b font-mono text-xs"><code>() -> new Random().nextInt()</code></td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b font-mono"><strong>BiFunction&lt;T, U, R&gt;</strong></td>
+                                    <td class="py-2 px-4 border-b font-mono">T, U</td>
+                                    <td class="py-2 px-4 border-b font-mono">R</td>
+                                    <td class="py-2 px-4 border-b">Combinar dos valores en un resultado.</td>
+                                    <td class="py-2 px-4 border-b font-mono text-xs"><code>(a, b) -> a + b</code></td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b font-mono"><strong>UnaryOperator&lt;T&gt;</strong></td>
+                                    <td class="py-2 px-4 border-b font-mono">T</td>
+                                    <td class="py-2 px-4 border-b font-mono">T</td>
+                                    <td class="py-2 px-4 border-b">Transformar un objeto sin cambiar su tipo.</td>
+                                    <td class="py-2 px-4 border-b font-mono text-xs"><code>n -> n * 2</code></td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 border-b font-mono"><strong>BinaryOperator&lt;T&gt;</strong></td>
+                                    <td class="py-2 px-4 border-b font-mono">T, T</td>
+                                    <td class="py-2 px-4 border-b font-mono">T</td>
+                                    <td class="py-2 px-4 border-b">Reducir/acumular elementos de una colección.</td>
+                                    <td class="py-2 px-4 border-b font-mono text-xs"><code>(acc, n) -> acc + n</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 border-b font-mono"><strong>BiPredicate&lt;T, U&gt;</strong></td>
+                                    <td class="py-2 px-4 border-b font-mono">T, U</td>
+                                    <td class="py-2 px-4 border-b font-mono">boolean</td>
+                                    <td class="py-2 px-4 border-b">Validar una condición entre dos objetos.</td>
+                                    <td class="py-2 px-4 border-b font-mono text-xs"><code>(list, e) -> list.contains(e)</code></td>
+                                </tr>
+                                 <tr>
+                                    <td class="py-2 px-4 border-b font-mono"><strong>BiConsumer&lt;T, U&gt;</strong></td>
+                                    <td class="py-2 px-4 border-b font-mono">T, U</td>
+                                    <td class="py-2 px-4 border-b font-mono">void</td>
+                                    <td class="py-2 px-4 border-b">Ejecutar una acción con dos objetos (ej. Map).</td>
+                                    <td class="py-2 px-4 border-b font-mono text-xs"><code>(k, v) -> map.put(k, v)</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-6 text-sm">
+                        <p><strong>Fuente de Referencia:</strong> Para una lista exhaustiva de todas las interfaces funcionales disponibles, puedes consultar la documentación oficial de Java.</p>
+                        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html" target="_blank" class="text-indigo-600 hover:underline">java.util.function (Documentación de Oracle)</a>
+                    </div>
+                `
+            },
+            {
+                id: 5,
+                title: "Method References",
+                mentoring: "Las referencias a métodos son un atajo para lambdas que simplemente llaman a un método existente. Hacen el código aún más legible al enfocarse en el 'qué' en lugar del 'cómo'.",
+                content: `
+                    <div class="info-box">
+                        <p><strong>🔗 ¿Qué son?</strong> Son una forma <strong>AÚN MÁS CORTA</strong> de escribir lambdas cuando la lambda simplemente llama a un método existente. Se usa el símbolo <code>::</code> (doble dos puntos).</p>
+                    </div>
+                    <h3>⚡ Comparación Rápida</h3>
+                    <div class="grid md:grid-cols-2 gap-6 mt-4">
+                        <div class="border p-4 rounded-lg">
+                            <h4 class="font-bold">Con Lambda</h4>
+                            <pre class="code-block"><code class="language-java">nombres.<span class="code-function">forEach</span>(
+    nombre -> System.out.println(nombre)
+);</code></pre>
+                        </div>
+                        <div class="border p-4 rounded-lg">
+                            <h4 class="font-bold">Con Method Reference</h4>
+                            <pre class="code-block"><code class="language-java">nombres.<span class="code-function">forEach</span>(
+    System.out::println
+);</code></pre>
+                        </div>
+                    </div>
+
+                    <h3>📚 Los 4 Tipos de Referencias a Métodos</h3>
+
+                    <div class="info-box">
+                        <h4>1. Referencia a un Método Estático</h4>
+                        <p class="text-sm"><strong>Sintaxis:</strong> <code>Clase::metodoEstatico</code></p>
+                        <p class="text-sm mt-2">Se usa cuando la lambda simplemente invoca a un método estático, pasándole el parámetro. Ideal para funciones de utilidad y conversiones.</p>
+                        <pre class="code-block"><code class="language-java"><span class="code-comment">// Lambda</span>
+List&lt;<span class="code-type">Integer</span>&gt; numeros = strings
+    .stream()
+    .map(s -> <span class="code-type">Integer</span>.parseInt(s))
+    .toList();
+
+<span class="code-comment">// Method Reference ✅</span>
+List&lt;<span class="code-type">Integer</span>&gt; numerosRef = strings
+    .stream()
+    .map(<span class="code-type">Integer</span>::parseInt)
+    .toList();</code></pre>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>2. Referencia a un Método de Instancia (de un objeto particular)</h4>
+                        <p class="text-sm"><strong>Sintaxis:</strong> <code>objeto::metodoDeInstancia</code></p>
+                        <p class="text-sm mt-2">Se usa cuando la lambda llama a un método de un objeto específico que ya existe fuera de la lambda. <code>System.out</code> es un ejemplo clásico.</p>
+                        <pre class="code-block"><code class="language-java"><span class="code-type">PrintWriter</span> writer = <span class="code-keyword">new</span> <span class="code-type">PrintWriter</span>(System.out);
+
+<span class="code-comment">// Lambda</span>
+list.forEach(item -> writer.println(item));
+
+<span class="code-comment">// Method Reference ✅</span>
+list.forEach(writer::println);</code></pre>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>3. Referencia a un Método de Instancia (de un objeto arbitrario)</h4>
+                        <p class="text-sm"><strong>Sintaxis:</strong> <code>Clase::metodoDeInstancia</code></p>
+                        <p class="text-sm mt-2">El más común en streams. El primer parámetro de la lambda se convierte en el objeto que llama al método. La lambda <code>(s) -> s.toUpperCase()</code> se traduce como "toma un String 's' y llama a su propio método toUpperCase", lo que equivale a <code>String::toUpperCase</code>.</p>
+                        <pre class="code-block"><code class="language-java"><span class="code-comment">// Lambda</span>
+List&lt;<span class="code-type">String</span>&gt; mayusculas = nombres
+    .stream()
+    .map(nombre -> nombre.toUpperCase())
+    .toList();
+
+<span class="code-comment">// Method Reference ✅</span>
+List&lt;<span class="code-type">String</span>&gt; mayusculasRef = nombres
+    .stream()
+    .map(<span class="code-type">String</span>::toUpperCase)
+    .toList();</code></pre>
+                    </div>
+
+                     <div class="info-box">
+                        <h4>4. Referencia a un Constructor</h4>
+                        <p class="text-sm"><strong>Sintaxis:</strong> <code>Clase::new</code></p>
+                        <p class="text-sm mt-2">Se usa cuando la lambda simplemente crea una nueva instancia de un objeto. El compilador elige el constructor adecuado basándose en los parámetros.</p>
+                        <pre class="code-block"><code class="language-java"><span class="code-comment">// Lambda</span>
+List&lt;<span class="code-type">Usuario</span>&gt; usuarios = nombres
+    .stream()
+    .map(nombre -> <span class="code-keyword">new</span> <span class="code-type">Usuario</span>(nombre))
+    .toList();
+
+<span class="code-comment">// Method Reference ✅</span>
+List&lt;<span class="code-type">Usuario</span>&gt; usuariosRef = nombres
+    .stream()
+    .map(<span class="code-type">Usuario</span>::new)
+    .toList();</code></pre>
+                    </div>
+                `
+            },
+            {
+                id: 6,
+                title: "Funciones de Orden Superior",
+                mentoring: "Una Función de Orden Superior opera con otras funciones, ya sea tomándolas como argumentos o devolviéndolas como resultado. Este concepto es la base para crear código increíblemente flexible y reutilizable.",
+                content: `
+                    <div class="info-box">
+                        <p><strong>🎓 ¿Qué es una Función de Orden Superior?</strong> Es una función que cumple <strong>al menos una</strong> de estas dos características:</p>
+                        <ul class="list-disc list-inside mt-2">
+                            <li>✅ <strong>Recibe</strong> una o más funciones como parámetros.</li>
+                            <li>✅ <strong>Retorna</strong> una función como resultado.</li>
+                        </ul>
+                    </div>
+                     <h3>🤔 ¿Por qué son importantes?</h3>
+                     <div class="tip-box">
+                        <h4>Analogía: La Fábrica de Galletas 🍪</h4>
+                        <p><strong>Función Normal:</strong> Una máquina que solo hace galletas de chocolate.</p>
+                        <p><strong>Función de Orden Superior:</strong> Una máquina que acepta diferentes <strong>moldes</strong>. Le das un molde de estrella y hace galletas de estrella. Le das uno de corazón y hace galletas de corazón. La máquina es la misma, pero el comportamiento cambia según el "molde" (la función) que le pases.</p>
+                    </div>
+                    <h3>📚 Tipo 1: Funciones que RECIBEN funciones</h3>
+                    <p>Permiten externalizar la lógica o la "estrategia" de un método, haciéndolo más genérico y reutilizable.</p>
+                    <pre class="code-block"><code class="language-java"><span class="code-comment">// --- Modelo y Datos ---</span>
+<span class="code-keyword">public record</span> <span class="code-type">Producto</span>(<span class="code-type">String</span> nombre, <span class="code-type">double</span> precio) {}
+List&lt;<span class="code-type">Producto</span>&gt; productos = <span class="code-keyword">new</span> ArrayList&lt;&gt;(List.of(
+    <span class="code-keyword">new</span> <span class="code-type">Producto</span>("Laptop", 1200.0),
+    <span class="code-keyword">new</span> <span class="code-type">Producto</span>("Mouse", 50.0)
+));
+
+<span class="code-comment">// --- Función de Orden Superior ---</span>
+<span class="code-keyword">public static void</span> <span class="code-function">aplicarDescuento</span>(
+    <span class="code-type">List</span>&lt;<span class="code-type">Producto</span>&gt; lista,
+    <span class="code-type">Function</span>&lt;<span class="code-type">Double</span>, <span class="code-type">Double</span>&gt; estrategia
+) {
+    lista.forEach(p -> p.precio = estrategia.apply(p.precio));
+}
+
+<span class="code-comment">// --- Uso y Salidas ---</span>
+<span class="code-function">aplicarDescuento</span>(productos, precio -> precio * 0.9);
+<span class="code-comment">// Salida: productos ahora contiene [Producto[nombre=Laptop, precio=1080.0], Producto[nombre=Mouse, precio=45.0]]</span>
+
+<span class="code-function">aplicarDescuento</span>(productos, precio -> precio - 10);
+<span class="code-comment">// Salida: productos ahora contiene [Producto[nombre=Laptop, precio=1070.0], Producto[nombre=Mouse, precio=35.0]]</span>
+</code></pre>
+
+                    <h3>📚 Tipo 2: Funciones que RETORNAN funciones</h3>
+                    <p>Actúan como una "fábrica de funciones", permitiendo crear configuraciones o especializaciones de una lógica base.</p>
+                     <pre class="code-block"><code class="language-java"><span class="code-comment">// --- Función de Orden Superior (Fábrica) ---</span>
+<span class="code-keyword">public static</span> <span class="code-type">Function</span>&lt;<span class="code-type">Double</span>, <span class="code-type">Double</span>&gt; <span class="code-function">crearMultiplicador</span>(<span class="code-type">double</span> factor) {
+    <span class="code-keyword">return</span> numero -> numero * factor;
+}
+
+<span class="code-comment">// --- Uso y Salidas ---</span>
+<span class="code-type">Function</span>&lt;<span class="code-type">Double</span>, <span class="code-type">Double</span>&gt; duplicar = <span class="code-function">crearMultiplicador</span>(2.0);
+<span class="code-type">Function</span>&lt;<span class="code-type">Double</span>, <span class="code-type">Double</span>&gt; aplicarIVA = <span class="code-function">crearMultiplicador</span>(1.19);
+
+<span class="code-type">double</span> resultado1 = duplicar.apply(10.0);
+<span class="code-comment">// Salida: resultado1 es 20.0</span>
+
+<span class="code-type">double</span> resultado2 = aplicarIVA.apply(100.0);
+<span class="code-comment">// Salida: resultado2 es 119.0</span>
+</code></pre>
+                `
+            },
+            {
+                id: 7,
+                title: "Evaluación",
+                mentoring: "Este es el desafío final. Aplicarás todo lo aprendido en un escenario complejo de gestión de turnos y nómina de una clínica. El objetivo es resolver problemas reales combinando diferentes herramientas funcionales.",
+                content: `
+                    <h3>Contexto del Desafío</h3>
+                    <p>Eres el desarrollador encargado de optimizar el sistema de RRHH de una clínica. Debes procesar los registros de turnos de un mes para generar reportes y cálculos de nómina. Utiliza los siguientes datos y tu conocimiento funcional para resolver los 10 desafíos.</p>
+                    <pre class="code-block"><code class="language-java"><span class="code-comment">// --- Modelos de Datos ---</span>
+<span class="code-keyword">public enum</span> <span class="code-type">Area</span> { CARDIOLOGIA, CIRUGIA, PEDIATRIA, ONCOLOGIA, URGENCIAS, ADMINISTRACION, RADIOLOGIA }
+<span class="code-keyword">public record</span> <span class="code-type">Empleado</span>(<span class="code-type">String</span> id, <span class="code-type">String</span> nombre, <span class="code-type">Area</span> area, <span class="code-type">double</span> salarioBaseHora) {}
+
+<span class="code-keyword">public enum</span> <span class="code-type">TipoTurno</span> { DIA, NOCHE, GUARDIA, AUSENCIA }
+
+<span class="code-keyword">public record</span> <span class="code-type">RegistroTurno</span>(<span class="code-type">String</span> empleadoId, <span class="code-type">LocalDate</span> fecha, <span class="code-type">TipoTurno</span> tipo, <span class="code-type">int</span> horas) {}
+
+<span class="code-comment">// --- Datos de Prueba ---</span>
+List&lt;<span class="code-type">Empleado</span>&gt; personal = List.of(
+    <span class="code-keyword">new</span> <span class="code-type">Empleado</span>("E01", "Ana Gómez", Area.CARDIOLOGIA, 25.0),
+    <span class="code-keyword">new</span> <span class="code-type">Empleado</span>("E02", "Luis Vera", Area.CIRUGIA, 45.0),
+    <span class="code-keyword">new</span> <span class="code-type">Empleado</span>("E03", "Carlos Rivas", Area.PEDIATRIA, 28.0),
+    <span class="code-keyword">new</span> <span class="code-type">Empleado</span>("E04", "Juan Mora", Area.CARDIOLOGIA, 22.0),
+    <span class="code-keyword">new</span> <span class="code-type">Empleado</span>("E05", "Sofía Castro", Area.ONCOLOGIA, 35.0),
+    <span class="code-keyword">new</span> <span class="code-type">Empleado</span>("E06", "Miguel Peña", Area.URGENCIAS, 38.0),
+    <span class="code-keyword">new</span> <span class="code-type">Empleado</span>("E07", "Laura Díaz", Area.ADMINISTRACION, 18.0),
+    <span class="code-keyword">new</span> <span class="code-type">Empleado</span>("E08", "Fernando Gil", Area.RADIOLOGIA, 33.0),
+    <span class="code-keyword">new</span> <span class="code-type">Empleado</span>("E09", "Isabel Luna", Area.CIRUGIA, 48.0),
+    <span class="code-keyword">new</span> <span class="code-type">Empleado</span>("E10", "Pedro Navas", Area.PEDIATRIA, 29.0),
+    <span class="code-keyword">new</span> <span class="code-type">Empleado</span>("E11", "Valeria Sol", Area.URGENCIAS, 40.0),
+    <span class="code-keyword">new</span> <span class="code-type">Empleado</span>("E12", "Ricardo León", Area.CARDIOLOGIA, 26.5),
+    <span class="code-keyword">new</span> <span class="code-type">Empleado</span>("E13", "Mónica Marín", Area.ONCOLOGIA, 36.0),
+    <span class="code-keyword">new</span> <span class="code-type">Empleado</span>("E14", "Andrés Salas", Area.ADMINISTRACION, 19.5),
+    <span class="code-keyword">new</span> <span class="code-type">Empleado</span>("E15", "Gabriela Paz", Area.RADIOLOGIA, 34.5)
+);
+
+List&lt;<span class="code-type">RegistroTurno</span>&gt; registrosMes = List.of(
+    <span class="code-keyword">new</span> <span class="code-type">RegistroTurno</span>("E01", LocalDate.of(2024, 10, 1), TipoTurno.NOCHE, 12),
+    <span class="code-keyword">new</span> <span class="code-type">RegistroTurno</span>("E02", LocalDate.of(2024, 10, 1), TipoTurno.DIA, 8),
+    <span class="code-keyword">new</span> <span class="code-type">RegistroTurno</span>("E01", LocalDate.of(2024, 10, 2), TipoTurno.AUSENCIA, 0),
+    <span class="code-keyword">new</span> <span class="code-type">RegistroTurno</span>("E04", LocalDate.of(2024, 10, 2), TipoTurno.DIA, 8),
+    <span class="code-keyword">new</span> <span class="code-type">RegistroTurno</span>("E02", LocalDate.of(2024, 10, 3), TipoTurno.GUARDIA, 24),
+    <span class="code-keyword">new</span> <span class="code-type">RegistroTurno</span>("E01", LocalDate.of(2024, 10, 3), TipoTurno.NOCHE, 12),
+    <span class="code-keyword">new</span> <span class="code-type">RegistroTurno</span>("E04", LocalDate.of(2024, 10, 4), TipoTurno.NOCHE, 12),
+    <span class="code-keyword">new</span> <span class="code-type">RegistroTurno</span>("E01", LocalDate.of(2024, 10, 5), TipoTurno.DIA, 8),
+    <span class="code-keyword">new</span> <span class="code-type">RegistroTurno</span>("E02", LocalDate.of(2024, 10, 5), TipoTurno.DIA, 8),
+    <span class="code-keyword">new</span> <span class="code-type">RegistroTurno</span>("E04", LocalDate.of(2024, 10, 6), TipoTurno.AUSENCIA, 0),
+    <span class="code-keyword">new</span> <span class="code-type">RegistroTurno</span>("E01", LocalDate.of(2024, 10, 7), TipoTurno.NOCHE, 12),
+    <span class="code-keyword">new</span> <span class="code-type">RegistroTurno</span>("E02", LocalDate.of(2024, 10, 8), TipoTurno.GUARDIA, 24),
+    <span class="code-keyword">new</span> <span class="code-type">RegistroTurno</span>("E04", LocalDate.of(2024, 10, 8), TipoTurno.DIA, 8),
+    <span class="code-keyword">new</span> <span class="code-type">RegistroTurno</span>("E01", LocalDate.of(2024, 10, 9), TipoTurno.DIA, 8),
+    <span class="code-keyword">new</span> <span class="code-type">RegistroTurno</span>("E02", LocalDate.of(2024, 10, 10), TipoTurno.DIA, 8)
+);
+</code></pre>
+                    <div class="space-y-4">
+                        <div class="evaluation-point"><strong>1. Reporte de Horas Trabajadas:</strong> Genera una estructura de datos (un <code>Map&lt;String, Integer&gt;</code>) que contenga el total de horas trabajadas (excluyendo ausencias) por cada ID de empleado.</div>
+                        <div class="evaluation-point"><strong>2. Identificación de Personal con Turnos de Guardia:</strong> Obtén una lista de los nombres (no los IDs) de todos los empleados que realizaron al menos un turno de tipo "GUARDIA". La lista no debe contener nombres duplicados.</div>
+                        <div class="evaluation-point"><strong>3. Calculadora de Salario Mensual Genérica:</strong> Implementa un método que calcule el salario de un empleado. Debe recibir al empleado y una función que determine el "factor de pago" para cada turno (ej. turnos de noche pagan 1.5x, guardias 2.0x). Usa este método para calcular el salario de "Ana Gómez" con un factor de 1.5 para turnos de noche y 1.0 para los demás.</div>
+                        <div class="evaluation-point"><strong>4. Generador de Validadores de Turnos:</strong> Crea un método que reciba un número máximo de horas y devuelva una lógica capaz de determinar si un <code>RegistroTurno</code> excede ese límite. Úsalo para crear un validador de "turnos largos" (más de 10 horas) y pruébalo con los registros del mes.</div>
+                        <div class="evaluation-point"><strong>5. Listado de Personal por Carga Laboral:</strong> Genera un listado del personal, ordenado de mayor a menor según la cantidad total de horas trabajadas en el mes. En caso de empate en horas, el orden debe ser alfabético por nombre.</div>
+                        <div class="evaluation-point"><strong>6. Consolidado de Ausencias:</strong> Crea un reporte (un <code>Map&lt;String, Long&gt;</code>) que muestre cuántos días de ausencia tuvo cada empleado durante el mes.</div>
+                        <div class="evaluation-point"><strong>7. Conversión de Registros a Eventos de Calendario:</strong> Define un <code>record EventoCalendario(String titulo, LocalDate fecha)</code>. Convierte la lista de registros del empleado "E02" a una lista de estos eventos. El título debe ser el tipo de turno. La conversión debe ser lo más concisa posible.</div>
+                        <div class="evaluation-point"><strong>8. Verificación de Cobertura Mínima:</strong> Implementa una lógica que verifique si en un día específico (ej. 1 de octubre de 2024) hubo al menos dos empleados trabajando (sin importar el tipo de turno).</div>
+                        <div class="evaluation-point"><strong>9. Detección de Turno Más Largo:</strong> Encuentra el <code>RegistroTurno</code> individual con la mayor cantidad de horas trabajadas en todo el mes.</div>
+                        <div class="evaluation-point"><strong>10. Reporte de Nómina para un Turno Específico:</strong> Reutilizando las herramientas que creaste, genera un reporte para todos los turnos de "NOCHE". El reporte debe mostrar el nombre del empleado y el pago total por esos turnos, aplicando un factor de pago de 1.5x.</div>
+                    </div>
+                `
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabNav = document.getElementById('tab-navigation');
+            const classSelect = document.getElementById('class-select');
+            const contentArea = document.getElementById('content-area');
+
+            modulesData.forEach((module, index) => {
+                // Populate Desktop Nav
+                const button = document.createElement('button');
+                button.className = `tab-button w-full text-left p-3 rounded-md transition-colors duration-200 ${index === 0 ? 'active' : ''}`;
+                button.textContent = module.title;
+                button.dataset.target = `class-content-${module.id}`;
+                tabNav.appendChild(button);
+
+                // Populate Mobile Dropdown
+                const option = document.createElement('option');
+                option.value = `class-content-${module.id}`;
+                option.textContent = module.title;
+                classSelect.appendChild(option);
+
+                // Populate Content Area
+                const contentPanel = document.createElement('div');
+                contentPanel.id = `class-content-${module.id}`;
+                contentPanel.className = `content-panel ${index > 0 ? 'hidden' : ''}`;
+                contentPanel.innerHTML = `
+                    <h2 class="text-3xl font-bold text-[#2c2a29]">${module.title}</h2>
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <h3 class="font-bold text-md text-[#3f3c3a] mb-2">Mentoría del Arquitecto:</h3>
+                        <p class="text-sm text-[#6e6a67] italic">${module.mentoring}</p>
+                    </div>
+                    <div class="mt-4">${module.content}</div>
+                `;
+                contentArea.appendChild(contentPanel);
+            });
+
+            function switchTab(targetId) {
+                document.querySelectorAll('.content-panel').forEach(panel => panel.classList.add('hidden'));
+                document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
+
+                const targetPanel = document.getElementById(targetId);
+                if (targetPanel) targetPanel.classList.remove('hidden');
+                
+                const targetButton = document.querySelector(`.tab-button[data-target="${targetId}"]`);
+                if(targetButton) targetButton.classList.add('active');
+
+                classSelect.value = targetId;
+                 contentArea.scrollTop = 0;
+            }
+
+            tabNav.addEventListener('click', (event) => {
+                const button = event.target.closest('.tab-button');
+                if (button) switchTab(button.dataset.target);
+            });
+
+            classSelect.addEventListener('change', (event) => switchTab(event.target.value));
+        });
+    </script>
+
+</body>
+</html>
+

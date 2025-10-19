@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de Formación: De Junior a Experto Reactivo en Java</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: He diseñado esta aplicación como una hoja de ruta visual e interactiva. En lugar de una lista estática, el plan de formación se presenta como un camino progresivo que el usuario puede recorrer. Cada módulo es un "hito" en este camino. La interacción principal es hacer clic en un módulo para expandirlo y ver los detalles (objetivo y conceptos). Esta estructura de "revelación progresiva" evita abrumar al usuario con información, permitiéndole centrarse en un solo tema a la vez. El flujo del usuario es simple: obtener una vista general, explorar un módulo específico y continuar por el camino. Elegí esta estructura porque convierte un plan de estudios en una experiencia de aprendizaje más atractiva y manejable, lo que es ideal para la asimilación de conceptos complejos. -->
+    <!-- Visualization & Content Choices: El informe fuente es conceptual y no contiene datos cuantitativos, por lo que no se utilizan librerías de gráficos como Chart.js. En su lugar, la información se presenta a través de componentes de UI estructurados y micro-visualizaciones creadas con HTML y Tailwind CSS. Por ejemplo, el Manifiesto Reactivo se representa en una cuadrícula de 2x2 para mostrar visualmente sus cuatro pilares interconectados. Esta aproximación traduce conceptos abstractos en diseños visuales limpios y fáciles de entender, lo que apoya directamente el objetivo de aprendizaje del informe. Cada concepto clave se presenta como una "etiqueta" para una rápida asimilación. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #3f3c3a;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        
+        .code-block {
+            background-color: #2c2a29;
+            color: #f8f8f2;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            white-space: pre;
+        }
+        .code-comment {
+            color: #9ca3af;
+        }
+        .task-block {
+            background-color: #F8F5F1;
+            border-left: 4px solid #BFB8AE;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            border-radius: 0.25rem;
+        }
+        .mentoring-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #EAE6E1;
+        }
+        .mentoring-section h4 {
+            font-weight: 700;
+            color: #2c2a29;
+            margin-bottom: 0.5rem;
+        }
+        .analogy-block {
+            background-color: #F8F5F1;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            font-style: italic;
+        }
+        .antipatten-block {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            border-radius: 0.25rem;
+        }
+        .tab-button.active {
+            background-color: #BFB8AE;
+            color: white;
+            font-weight: 700;
+        }
+        .evaluation-point {
+            margin-top: 1.5rem;
+        }
+        .evaluation-point strong {
+            color: #2c2a29;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#2c2a29] tracking-tight">Plan de Formación Detallado</h1>
+            <p class="mt-4 text-lg md:text-xl text-[#6e6a67] max-w-3xl mx-auto">De Junior a Experto en Programación Funcional y Reactiva con Java.</p>
+        </header>
+
+        <main class="bg-white rounded-xl shadow-md border border-gray-200/80 overflow-hidden">
+            <div class="md:grid md:grid-cols-12">
+                <!-- Mobile Dropdown -->
+                <div class="md:hidden p-4 border-b border-gray-200">
+                    <label for="class-select" class="sr-only">Seleccionar Clase</label>
+                    <select id="class-select" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </select>
+                </div>
+
+                <!-- Desktop Vertical Tabs -->
+                <aside class="hidden md:block md:col-span-4 lg:col-span-3 p-4 border-r border-gray-200 bg-[#F8F5F1]">
+                    <h3 class="text-lg font-bold text-[#2c2a29] mb-4">Índice del Curso</h3>
+                    <nav id="tab-navigation" class="space-y-2">
+                        <!-- Tabs will be injected here -->
+                    </nav>
+                </aside>
+
+                <!-- Content Area -->
+                <div id="content-area" class="md:col-span-8 lg:col-span-9 p-6 md:p-8 overflow-y-auto" style="max-height: 80vh;">
+                    <!-- Content panels will be injected here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const modulesData = [
+            {
+                id: 1,
+                title: "Clase 1: Enfoques de Programación",
+                mentoring: "Antes de escribir una sola línea de código funcional, un buen arquitecto debe entender el mapa del territorio. Esta clase es ese mapa. Distinguiremos entre dar órdenes (imperativo) y describir resultados (declarativo). Dominar esta diferencia es el primer paso para pensar como un programador funcional.",
+                detailedTheory: `
+                    <div class="mentoring-section">
+                        <h4>Teoría Detallada</h4>
+                        <h5 class="font-bold mt-4">1. Paradigmas de Programación: ¿Qué son?</h5>
+                        <p class="mt-2">Un paradigma de programación es un estilo o una "manera de pensar" sobre cómo estructurar y escribir código. No son lenguajes, sino enfoques que un lenguaje puede soportar. Los dos grandes enfoques que nos interesan son el Imperativo y el Declarativo.</p>
+                        <h5 class="font-bold mt-4">2. Programación Imperativa / Estructural</h5>
+                        <p class="mt-2">Se enfoca en describir <strong>cómo</strong> un programa opera. Es el paradigma más antiguo y tradicional. Le damos a la computadora una secuencia de comandos paso a paso que cambian el estado del programa para llegar al resultado.</p>
+                        <h5 class="font-bold mt-4">3. Programación Declarativa / Funcional</h5>
+                        <p class="mt-2">Se enfoca en describir <strong>qué</strong> resultado quieres obtener, sin especificar el flujo de control paso a paso. Se expresa la lógica de una computación sin describir su flujo de control.</p>
+                        <div class="overflow-x-auto mt-6">
+                            <table class="min-w-full bg-white border border-gray-200">
+                                <thead class="bg-[#F8F5F1]">
+                                    <tr>
+                                        <th class="py-2 px-4 border-b text-left">Paradigma</th>
+                                        <th class="py-2 px-4 border-b text-left text-green-700">Pros</th>
+                                        <th class="py-2 px-4 border-b text-left text-red-700">Contras</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="py-2 px-4 border-b font-bold align-top">Declarativo / Funcional</td>
+                                        <td class="py-2 px-4 border-b align-top text-sm"><ul class="list-disc list-inside"><li>Más legible y conciso para lógica compleja.</li><li>Predecible y fácil de razonar (menos bugs).</li><li>Seguro para concurrencia por defecto.</li></ul></td>
+                                        <td class="py-2 px-4 border-b align-top text-sm"><ul class="list-disc list-inside"><li>Curva de aprendizaje más pronunciada.</li><li>Puede ser menos performante para tareas de muy bajo nivel.</li></ul></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2 px-4 border-b font-bold align-top">Imperativo / Estructural</td>
+                                        <td class="py-2 px-4 border-b align-top text-sm"><ul class="list-disc list-inside"><li>Intuitivo para principiantes.</li><li>Control granular sobre el hardware y la memoria.</li><li>Gran ecosistema y base de código existente.</li></ul></td>
+                                        <td class="py-2 px-4 border-b align-top text-sm"><ul class="list-disc list-inside"><li>Propenso a errores por estado mutable compartido.</li><li>Difícil de paralelizar de forma segura.</li><li>El código puede volverse complejo y difícil de seguir.</li></ul></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>`,
+                architectAnalogy: `<div class="analogy-block"><h4>Analogía del Arquitecto</h4><p><strong>Imperativo:</strong> Eres un micro-manager que le da a un empleado junior una lista de tareas detalladas: "Ve al archivador B, abre el tercer cajón, saca la carpeta roja, busca el documento con el sello azul, hazle una fotocopia y tráemela". Controlas cada paso.<br/><strong>Declarativo:</strong> Eres un líder que le dice a un empleado senior: "Necesito una copia del informe de ventas del último trimestre". Confías en que el experto sabe cómo obtenerlo. Tú declaras el resultado final, el "qué", y él se encarga del "cómo".</p></div>`,
+                codeExamples: `
+                    <div class="mentoring-section">
+                        <h4>Código Comentado Paso a Paso</h4>
+                        <p><strong>Ejemplo: Duplicar los números pares de una lista</strong></p>
+                        <pre class="code-block"><code class="language-java">List&lt;Integer&gt; numeros = List.of(1, 2, 3, 4, 5, 6);
+
+<span class="code-comment">// Estilo IMPERATIVO / ESTRUCTURAL: Cómo hacerlo</span>
+List&lt;Integer&gt; resultadoImperativo = new ArrayList&lt;&gt;();
+for (Integer numero : numeros) {
+    if (numero % 2 == 0) {
+        resultadoImperativo.add(numero * 2);
+    }
+}
+<span class="code-comment">// resultadoImperativo es [4, 8, 12]</span>
+
+<span class="code-comment">// Estilo DECLARATIVO (Funcional): Qué queremos</span>
+List&lt;Integer&gt; resultadoDeclarativo = numeros.stream()
+    .filter(n -> n % 2 == 0)
+    .map(n -> n * 2)
+    .collect(Collectors.toList());
+<span class="code-comment">// resultadoDeclarativo es [4, 8, 12]</span>
+</code></pre>
+                    </div>`,
+                commonMistakes: `<div class="antipatten-block"><h4>Errores Comunes y Anti-Patrones</h4><p>El anti-patrón más común es mezclar los dos estilos, especialmente al principio. Por ejemplo, usar un \`.forEach()\` en un stream para añadir elementos a una colección externa. Esto reintroduce el estado mutable y los efectos secundarios en un pipeline declarativo, perdiendo muchos de sus beneficios. La forma correcta casi siempre es usar un colector como \`collect(Collectors.toList())\`.</p></div>`,
+            },
+            {
+                id: 2,
+                title: "Clase 2: Filosofía Funcional - Funciones Puras e Inmutabilidad",
+                mentoring: "Una vez entendido el 'qué' declarativo, nos enfocamos en el 'cómo' funcional. El código funcional es predecible. Una función pura siempre da el mismo resultado para la misma entrada, sin sorpresas. La inmutabilidad evita que los datos cambien inesperadamente. Domina estos dos conceptos y tu código será más fácil de testear y razonar.",
+                 detailedTheory: `
+                    <div class="mentoring-section">
+                        <h4>Teoría Detallada</h4>
+                        <p>Estos son los dos pilares sobre los que se asienta todo el paradigma funcional. Entenderlos no es opcional, es el requisito fundamental.</p>
+                        <h5 class="font-bold mt-4">1. Funciones Puras y Efectos Secundarios</h5>
+                        <p class="mt-2">Una función se considera "pura" si cumple dos condiciones estrictas: siempre devuelve el mismo resultado para los mismos argumentos y no tiene efectos secundarios observables (modificar estado externo, I/O, etc.).</p>
+                        <h5 class="font-bold mt-4">2. Transparencia Referencial</h5>
+                        <p class="mt-2">Esta es la propiedad más importante que se deriva de las funciones puras. Una expresión es referencialmente transparente si puede ser reemplazada por su valor correspondiente sin cambiar el comportamiento del programa. En el contexto de las funciones, esto significa que si tienes una llamada a una función pura como \`sumarPuro(2, 3)\`, puedes reemplazarla mentalmente o incluso en el código por su resultado, \`5\`, y el programa seguirá funcionando exactamente igual. Esto es imposible con funciones impuras, ya que su resultado puede depender de factores externos o la llamada misma puede tener un efecto secundario que no debe ser eliminado.</p>
+                        <h5 class="font-bold mt-4">3. Inmutabilidad: El Escudo Protector</h5>
+                        <p class="mt-2">La inmutabilidad es la práctica de no cambiar el estado de un objeto después de que ha sido creado. Para lograrla en Java, tenemos principalmente dos enfoques modernos: los \`records\` y el patrón \`Builder\`.</p>
+                         <ul class="list-disc list-inside ml-4 mt-1 text-sm">
+                            <li><strong>Records:</strong> Ideales para objetos de datos simples y concisos. Son inmutables por defecto.</li>
+                            <li><strong>Patrón Builder:</strong> Excelente para objetos complejos con muchos campos, especialmente si algunos son opcionales. Permite una construcción fluida y segura del objeto inmutable.</li>
+                        </ul>
+                        <h5 class="font-bold mt-6">4. Funcional vs. Puramente Funcional</h5>
+                        <p class="mt-2">Es importante entender que Java, al adoptar características funcionales, se convierte en un lenguaje que <strong>soporta</strong> la programación funcional, pero no es un lenguaje <strong>puramente</strong> funcional como Haskell o Lisp.</p>
+                    </div>`,
+                architectAnalogy: `<div class="analogy-block"><h4>Analogía del Arquitecto</h4><p>Una <strong>función pura</strong> es como un <strong>matemático con una pizarra</strong>. Una <strong>función impura</strong> es como un <strong>chef en una cocina</strong>.</p></div>`,
+                codeExamples: `
+                    <div class="mentoring-section">
+                        <h4>Código Comentado Paso a Paso</h4>
+                        <p><strong>Ejemplo 1: Pura vs. Impura con la clase Calculadora</strong></p>
+                        <pre class="code-block"><code class="language-java">class Calculadora {
+    private int total = 0; <span class="code-comment">// Estado externo mutable. ¡Peligro!</span>
+    public int sumarImpuro(int valor) {
+        this.total += valor;
+        return this.total;
+    }
+    public int sumarPuro(int a, int b) {
+        return a + b;
+    }
+}
+</code></pre>
+                        <h4 class="mt-6">Ejemplos de Transparencia Referencial</h4>
+                        <p><strong>Ejemplo 2: Una función referencialmente transparente</strong></p>
+                        <pre class="code-block"><code class="language-java"><span class="code-comment">// Esta función es pura y, por lo tanto, referencialmente transparente.</span>
+public int multiplicar(int a, int b) {
+    return a * b;
+}
+
+int resultado1 = multiplicar(5, 10) + 2; <span class="code-comment">// resultado1 es 52</span>
+
+<span class="code-comment">// Podemos reemplazar 'multiplicar(5, 10)' por su resultado (50) sin cambiar nada.</span>
+int resultado2 = 50 + 2; <span class="code-comment">// resultado2 también es 52. El comportamiento es idéntico.</span>
+</code></pre>
+                        <p class="mt-4"><strong>Ejemplo 3: Una función que NO es referencialmente transparente</strong></p>
+                        <pre class="code-block"><code class="language-java">int contadorGlobal = 0;
+
+<span class="code-comment">// Esta función es impura. No es referencialmente transparente.</span>
+public int sumarConContador(int valor) {
+    contadorGlobal++; <span class="code-comment">// Modifica un estado externo</span>
+    return valor + contadorGlobal;
+}
+
+<span class="code-comment">// Primera llamada</span>
+int res1 = sumarConContador(5); <span class="code-comment">// contadorGlobal es 1, devuelve 6</span>
+<span class="code-comment">// Segunda llamada</span>
+int res2 = sumarConContador(5); <span class="code-comment">// contadorGlobal es 2, devuelve 7</span>
+
+<span class="code-comment">// Si reemplazamos 'sumarConContador(5)' por su primer resultado (6), el programa cambia.</span>
+int res_reemplazado = 6; <span class="code-comment">// El contadorGlobal NO se incrementa a 2.</span>
+</code></pre>
+                        <h4 class="mt-6">Ejemplos de Inmutabilidad</h4>
+                        <p><strong>Ejemplo 4: Inmutabilidad con \`record\` y método "wither"</strong></p>
+                        <pre class="code-block"><code class="language-java">public record MensajeRecord(String contenido, LocalDateTime fecha) {
+    public MensajeRecord withContenido(String nuevoContenido) {
+        return new MensajeRecord(nuevoContenido, this.fecha);
+    }
+}
+
+MensajeRecord msg1 = new MensajeRecord("Versión 1", LocalDateTime.now());
+MensajeRecord msg2 = msg1.withContenido("Versión 2");
+System.out.println("Original: " + msg1);
+System.out.println("Modificado: " + msg2);
+System.out.println("Original sigue intacto: " + msg1);
+</code></pre>
+                        <p class="mt-4"><strong>Ejemplo 5: Inmutabilidad con el Patrón Builder</strong></p>
+                        <pre class="code-block"><code class="language-java">public final class UserProfile {
+    private final String username; private final String email;
+    private final String firstName; private final String lastName;
+
+    private UserProfile(Builder builder) {
+        this.username = builder.username; this.email = builder.email;
+        this.firstName = builder.firstName; this.lastName = builder.lastName;
+    }
+    public Builder toBuilder() {
+        return new Builder(this.username, this.email)
+            .withFirstName(this.firstName).withLastName(this.lastName);
+    }
+    public static class Builder {
+        private final String username; private final String email;
+        private String firstName = ""; private String lastName = "";
+        public Builder(String u, String e) { this.username = u; this.email = e; }
+        public Builder withFirstName(String fn) { this.firstName = fn; return this; }
+        public Builder withLastName(String ln) { this.lastName = ln; return this; }
+        public UserProfile build() { return new UserProfile(this); }
+    }
+}
+
+UserProfile p1 = new UserProfile.Builder("ana_dev", "ana@example.com").withFirstName("Ana").build();
+UserProfile p2 = p1.toBuilder().withLastName("García").build();
+
+System.out.println("Perfil 1 Apellido: " + p1.lastName); <span class="code-comment">// "" (vacío)</span>
+System.out.println("Perfil 2 Apellido: " + p2.lastName); <span class="code-comment">// "García"</span>
+</code></pre>
+                    </div>`,
+                commonMistakes: `<div class="antipatten-block"><h4>Errores Comunes y Anti-Patrones</h4><p><strong>1. Confundir una referencia \`final\` con inmutabilidad:</strong> Declarar \`final List<String> miLista = new ArrayList<>();\` no hace la lista inmutable. Solo previene que \`miLista\` apunte a otra lista, pero todavía puedes hacer \`miLista.add("nuevo")\`. La forma correcta es envolverla: \`List<String> listaInmutable = Collections.unmodifiableList(miLista);\`.</p><p class="mt-2"><strong>2. Exponer campos mutables en objetos inmutables:</strong> Si un campo de tu clase inmutable es un objeto mutable (como una \`Date\` o una \`ArrayList\`), debes devolver una copia defensiva en el getter para mantener la inmutabilidad.</p></div>`,
+            },
+            {
+                id: 3,
+                title: "Clase 3: Interfaces Funcionales - El Contrato",
+                mentoring: "Las interfaces funcionales son el 'contrato' o el 'plano' que una expresión lambda debe cumplir. Antes de escribir una lambda, debemos entender qué 'forma' debe tener: qué recibe y qué devuelve. Java nos da un juego de herramientas estándar (`Predicate`, `Function`, `Consumer`, `Supplier`) que cubren el 99% de los casos.",
+                detailedTheory: `
+                    <div class="mentoring-section">
+                        <h4>¿Qué es una Interfaz Funcional y cómo está compuesta?</h4>
+                        <p>Una <strong>Interfaz Funcional</strong> es el pilar sobre el que se construyen las expresiones lambda en Java. Es, en esencia, el "tipo de dato" de una función. Su composición es muy simple y estricta: debe contener <strong>exactamente un método abstracto</strong> (regla SAM), que define la "firma" que la lambda debe respetar. La anotación <strong>\`@FunctionalInterface\`</strong> asegura este contrato en tiempo de compilación.</p>
+                    </div>`,
+                architectAnalogy: `<div class="analogy-block"><h4>Analogía del Arquitecto</h4><p>Una <strong>interfaz funcional</strong> es como un <strong>enchufe de pared</strong>. Define una forma estándar y un propósito. Una <strong>lambda</strong> es el <strong>aparato eléctrico</strong>. Solo puedes conectar el aparato al enchufe si sus clavijas (la firma de la lambda) coinciden con los agujeros del enchufe (el método abstracto).</p></div>`,
+                codeExamples: `
+                    <div class="mentoring-section">
+                        <h4>Código Comentado Paso a Paso</h4>
+                        <p><strong>Ejemplo 1: Creando nuestra propia Interfaz Funcional</strong></p>
+                        <pre class="code-block"><code class="language-java">@FunctionalInterface
+interface OperacionAritmetica {
+    int calcular(int a, int b);
+}
+
+OperacionAritmetica suma = (a, b) -> a + b;
+System.out.println("Suma: " + suma.calcular(10, 5)); <span class="code-comment">// 15</span>
+</code></pre>
+                        <h4 class="mt-6">Tipos de Interfaces Funcionales en \`java.util.function\`</h4>
+                        
+                        <p class="font-semibold mt-4">1. Predicate&lt;T&gt;</p>
+                        <p class="text-sm"><strong>Propósito:</strong> Evaluar una condición sobre un objeto y devolver \`true\` o \`false\`.<br/><strong>Uso:</strong> Filtrar datos.<br/><strong>Composición:</strong> \`boolean test(T t)\` (Toma 1 parámetro, devuelve \`boolean\`).</p>
+                        <pre class="code-block"><code class="language-java">Predicate&lt;String&gt; noEstaVacio = texto -> !texto.isEmpty();
+Predicate&lt;String&gt; tieneMasDe8Letras = s -> s.length() > 8;
+Predicate&lt;String&gt; esValido = noEstaVacio.and(tieneMasDe8Letras);
+System.out.println(esValido.test("JavaFuncional")); <span class="code-comment">// true</span>
+</code></pre>
+
+                        <p class="font-semibold mt-4">2. Function&lt;T, R&gt;</p>
+                        <p class="text-sm"><strong>Propósito:</strong> Tomar un objeto T, transformarlo y devolver un objeto R.<br/><strong>Uso:</strong> Mapear o convertir datos.<br/><strong>Composición:</strong> \`R apply(T t)\` (Toma 1 parámetro, devuelve un resultado).</p>
+                        <pre class="code-block"><code class="language-java">Function&lt;String, Integer&gt; obtenerLongitud = String::length;
+Function&lt;Integer, String&gt; formato = l -> "Longitud: " + l;
+String resultado = obtenerLongitud.andThen(formato).apply("Java");
+System.out.println(resultado); <span class="code-comment">// "Longitud: 4"</span>
+</code></pre>
+                        
+                        <p class="font-semibold mt-4">3. Consumer&lt;T&gt;</p>
+                        <p class="text-sm"><strong>Propósito:</strong> Realizar una acción con un objeto sin devolver nada.<br/><strong>Uso:</strong> Efectos secundarios controlados (logs, I/O).<br/><strong>Composición:</strong> \`void accept(T t)\` (Toma 1 parámetro, no devuelve nada).</p>
+                        <pre class="code-block"><code class="language-java">Consumer&lt;String&gt; log = msg -> System.out.println("LOG: " + msg);
+Consumer&lt;String&gt; notificar = msg -> System.out.println("NOTIFICATION: " + msg);
+Consumer&lt;String&gt; logYNotificar = log.andThen(notificar);
+logYNotificar.accept("Sistema iniciado.");
+</code></pre>
+
+                        <p class="font-semibold mt-4">4. Supplier&lt;T&gt;</p>
+                        <p class="text-sm"><strong>Propósito:</strong> Proveer o generar un valor sin recibir ninguna entrada.<br/><strong>Uso:</strong> Creación perezosa de objetos, valores por defecto.<br/><strong>Composición:</strong> \`T get()\` (No toma parámetros, devuelve un resultado).</p>
+                        <pre class="code-block"><code class="language-java">Supplier&lt;UUID&gt; generadorId = UUID::randomUUID;
+System.out.println(generadorId.get());
+</code></pre>
+
+                        <h4 class="mt-6">5. Variaciones Comunes y Especializadas</h4>
+                        <p class="font-semibold mt-4">BiFunction&lt;T, U, R&gt;</p>
+                        <p class="text-sm"><strong>Propósito:</strong> Una \`Function\` con dos argumentos.<br/><strong>Uso:</strong> Combinar dos valores en uno solo.<br/><strong>Composición:</strong> \`R apply(T t, U u)\`.</p>
+                        <pre class="code-block"><code class="language-java">BiFunction&lt;String, String, String&gt; crearNombreCompleto = (n, a) -> n + " " + a;
+System.out.println(crearNombreCompleto.apply("Ana", "García"));
+</code></pre>
+
+                        <p class="font-semibold mt-4">UnaryOperator&lt;T&gt;</p>
+                        <p class="text-sm"><strong>Propósito:</strong> \`Function\` donde entrada y salida son del mismo tipo.<br/><strong>Uso:</strong> Transformaciones que no cambian el tipo.<br/><strong>Composición:</strong> \`T apply(T t)\`.</p>
+                         <pre class="code-block"><code class="language-java">UnaryOperator&lt;Integer&gt; cuadrado = n -> n * n;
+System.out.println(cuadrado.apply(5)); <span class="code-comment">// 25</span>
+</code></pre>
+
+                        <p class="font-semibold mt-4">BinaryOperator&lt;T&gt;</p>
+                        <p class="text-sm"><strong>Propósito:</strong> \`BiFunction\` donde los tres tipos son iguales.<br/><strong>Uso:</strong> Operaciones de "reducción" o acumulación.<br/><strong>Composición:</strong> \`T apply(T t, T u)\`.</p>
+                         <pre class="code-block"><code class="language-java">BinaryOperator&lt;Integer&gt; multiplicacion = (a, b) -> a * b;
+System.out.println(multiplicacion.apply(7, 6)); <span class="code-comment">// 42</span>
+</code></pre>
+                    </div>`,
+                commonMistakes: `<div class="antipatten-block"><h4>Errores Comunes y Anti-Patrones</h4><p><strong>Reinventar la rueda:</strong> Un error común de principiante es crear interfaces funcionales propias para casos que ya están cubiertos por el paquete \`java.util.function\`. Antes de crear una nueva, siempre revisa si ya existe una genérica que puedas usar. Usar las estándar hace tu código más legible para otros desarrolladores.</p></div>`,
+            },
+            {
+                id: 4,
+                title: "Clase 4: Evaluación - Módulo 1 (Gestión Humana)",
+                mentoring: "Es hora de poner a prueba tus cimientos. Como arquitecto, no solo debes conocer la teoría, sino aplicarla para resolver problemas del mundo real. En este desafío, actuarás como un desarrollador en el departamento de Talento Humano, utilizando tus nuevas habilidades funcionales para analizar datos de empleados de manera eficiente y declarativa.",
+                detailedTheory: `
+                    <div class="mentoring-section">
+                        <h4>Contexto y Desafíos de Código</h4>
+                        <p>Utiliza la siguiente clase \`Empleado\` y la lista de datos para resolver los 10 puntos a continuación. Debes resolverlos usando únicamente los conceptos de las clases 1, 2 y 3.</p>
+                        <pre class="code-block"><code class="language-java">public record Empleado(String nombre, String area, double salario, int aniosDeServicio) {}
+
+List&lt;Empleado&gt; empleados = List.of(
+    new Empleado("Ana", "TI", 75000, 5),
+    new Empleado("Beto", "Marketing", 60000, 3),
+    new Empleado("Carlos", "TI", 90000, 8),
+    new Empleado("Diana", "Ventas", 55000, 2),
+    new Empleado("Elena", "Marketing", 80000, 7),
+    new Empleado("Fernando", "Ventas", 58000, 4),
+    new Empleado("Gaby", "TI", 120000, 10)
+);</code></pre>
+                        <div class="space-y-4">
+                            <div class="evaluation-point"><strong>1. Análisis de Paradigmas:</strong> Describe con tus palabras la diferencia entre un enfoque imperativo y uno declarativo para calcular el salario promedio de los empleados del área de "TI".</div>
+                            <div class="evaluation-point"><strong>2. Regla de Negocio (Filtro):</strong> Define una regla reutilizable que determine si un empleado es "senior" (más de 5 años de servicio). Prueba esta regla con 'Ana' y 'Diana'.</div>
+                            <div class="evaluation-point"><strong>3. Transformación de Datos:</strong> Define una lógica reutilizable que, para un empleado, devuelva su nombre en mayúsculas. Pruébala con el empleado 'Beto'.</div>
+                            <div class="evaluation-point"><strong>4. Acción sobre Datos:</strong> Implementa una acción que, al recibir un empleado, simule el envío de un correo de aniversario, imprimiendo "Feliz aniversario, [nombre]!". Aplícala al empleado 'Carlos'.</div>
+                            <div class="evaluation-point"><strong>5. Generador de Datos:</strong> Crea una pieza de código que pueda ser invocada para generar un nuevo empleado "becario" con valores por defecto (nombre "Becario", área "N/A", salario 15000, 0 años de servicio).</div>
+                            <div class="evaluation-point"><strong>6. Contrato Funcional a Medida:</strong> Define un 'contrato' personalizado para calcular bonos. Este contrato debe tener un único método abstracto llamado \`calcular\` que reciba un empleado y devuelva un \`double\`. Luego, implementa este contrato para calcular un bono del 10% del salario por cada año de servicio y pruébalo con 'Gaby'.</div>
+                            <div class="evaluation-point"><strong>7. Combinación de Reglas:</strong> Combina dos condiciones: una para empleados del área 'Marketing' y otra para empleados con un salario superior a 70000, para crear una única regla que identifique a los empleados que cumplen ambos criterios. Pruébala con 'Elena' y 'Beto'.</div>
+                            <div class="evaluation-point"><strong>8. Composición de Transformaciones:</strong> Crea una lógica que primero calcule un aumento del 10% sobre el salario de un empleado y, a continuación, formatee ese nuevo salario como un texto (ej. "Nuevo Salario: $XX.XX"). Esta lógica debe ser una única operación compuesta. Pruébala con 'Fernando'.</div>
+                            <div class="evaluation-point"><strong>9. Demostración de Pureza:</strong> Escribe un método \`calcularProximoAumentoPuro\` que reciba un empleado y un porcentaje, y devuelva el nuevo salario sin modificar el empleado original. Demuestra, imprimiendo los valores, que el empleado original no fue alterado.</div>
+                            <div class="evaluation-point"><strong>10. Operación Inmutable:</strong> Usando un método 'wither' en el \`record Empleado\` (que debes crear), genera una nueva instancia de "Ana" que refleje una promoción al área de "Gerencia de TI" con un salario de 95000. Imprime tanto el objeto original como el nuevo para demostrar la inmutabilidad.</div>
+                        </div>
+                    </div>`
+            },
+            {
+                id: 5,
+                title: "Clase 5: Funciones de Orden Superior",
+                mentoring: "Aquí es donde el paradigma funcional despliega su verdadero poder. Las funciones de orden superior nos permiten crear abstracciones increíblemente potentes. En lugar de escribir código que opera sobre datos, escribimos código que opera sobre otros códigos (funciones), permitiéndonos componer comportamientos y crear APIs fluidas y declarativas como la de Streams.",
+                detailedTheory: `
+                    <div class="mentoring-section">
+                        <h4>Teoría Detallada</h4>
+                        <p>Una <strong>Función de Orden Superior (Higher-Order Function)</strong> es una función que opera con otras funciones, ya sea tomándolas como argumentos o devolviéndolas como resultado. Este concepto es la consecuencia directa de tener "Funciones de Primera Clase" y es la base para patrones de diseño avanzados y para la creación de DSLs (Domain-Specific Languages) internos.</p>
+                        <h5 class="font-bold mt-4">1. Tomar Funciones como Argumentos</h5>
+                        <p class="mt-2">Permite externalizar la lógica o la "estrategia" de un método. Esto se conoce como <strong>inversión de control</strong>.</p>
+                        <h5 class="font-bold mt-4">2. Devolver Funciones como Resultado</h5>
+                        <p class="mt-2">Una función que devuelve otra función actúa como una <strong>fábrica de funciones</strong>. Permite crear configuraciones o especializaciones de una lógica base.</p>
+                    </div>`,
+                architectAnalogy: `<div class="analogy-block"><h4>Analogía del Arquitecto</h4><p>Imagina una <strong>fábrica de herramientas (una función de orden superior)</strong>. No produce un coche, produce las herramientas para construir coches. Puedes pedirle a la fábrica: "dame una llave inglesa ajustada a 12mm" (<strong>devolver una función especializada</strong>). La fábrica te da una \`Function\` que ya sabe que debe trabajar a 12mm. Alternativamente, podrías tener una <strong>cadena de montaje (otra función de orden superior)</strong>. La cadena de montaje tiene estaciones de trabajo vacías. Tú, como gerente, colocas a un <strong>operario especializado (una función)</strong> en cada estación (<strong>pasar funciones como argumento</strong>): uno para pintar, otro para atornillar. La cadena de montaje simplemente ejecuta el trabajo de los operarios que le has proporcionado.</p></div>`,
+                codeExamples: `
+                    <div class="mentoring-section">
+                        <h4>Código Comentado Paso a Paso</h4>
+                        <p><strong>Ejemplo 1: Tomar una función - El patrón de ejecución alrededor</strong></p>
+                        <pre class="code-block"><code class="language-java">public static &lt;T&gt; T medirTiempo(Supplier&lt;T&gt; operacion) {
+    long inicio = System.currentTimeMillis();
+    T resultado = operacion.get();
+    long fin = System.currentTimeMillis();
+    System.out.println("La operación tardó: " + (fin - inicio) + " ms");
+    return resultado;
+}</code></pre>
+                        <p class="mt-4"><strong>Ejemplo 2: Devolver una función - Fábrica de validadores</strong></p>
+                        <pre class="code-block"><code class="language-java">public Predicate&lt;String&gt; contienePalabra(String palabra) {
+    return texto -> texto.toLowerCase().contains(palabra.toLowerCase());
+}</code></pre>
+                    </div>`,
+                commonMistakes: `<div class="antipatten-block"><h4>Errores Comunes y Anti-Patrones</h4><p><strong>No abstraer lo suficiente:</strong> A menudo, los desarrolladores escriben varias funciones que hacen casi lo mismo con una pequeña variación. El patrón correcto es crear una función de orden superior que tome esa variación como una función lambda. Por ejemplo, en lugar de \`buscarUsuariosActivos\` y \`buscarUsuariosAdmin\`, crea una función \`buscarUsuarios(Predicate<Usuario> condicion)\`.</p></div>`,
+            },
+            {
+                id: 6,
+                title: "Clase 6: Expresiones Lambda - La Sintaxis",
+                mentoring: "Las lambdas son la sintaxis que nos permite escribir 'funciones sobre la marcha'. Son el corazón práctico de la programación funcional en Java, permitiéndonos pasar comportamiento como si fueran datos, de una forma increíblemente concisa.",
+                detailedTheory: `
+                    <div class="mentoring-section">
+                        <h4>Teoría Detallada</h4>
+                        <p>Las expresiones lambda son la característica más visible de Java 8. Proporcionan una forma de implementar instancias de <strong>interfaces funcionales</strong> de manera concisa.</p>
+                        <h5 class="font-bold mt-4">1. Anatomía de una Expresión Lambda</h5>
+                        <p class="mt-2">Una lambda consta de tres partes: <code>(parámetros) -> {cuerpo}</code></p>
+                        <h5 class="font-bold mt-4">2. "Target Typing"</h5>
+                        <p class="mt-2">Una lambda por sí misma no tiene un tipo. Su tipo es inferido por el compilador a partir del contexto (el "target type"). Este contexto debe ser una <strong>interfaz funcional</strong> compatible.</p>
+                        <h5 class="font-bold mt-4">3. Captura de Variables</h5>
+                        <p class="mt-2">Las lambdas pueden "capturar" (acceder) a variables locales del método donde son declaradas. Sin embargo, estas variables deben ser <strong>finales o efectivamente finales</strong>.</p>
+                    </div>`,
+                architectAnalogy: `<div class="analogy-block"><h4>Analogía del Arquitecto</h4><p>Una <strong>clase anónima</strong> es como escribir una <strong>carta formal completa</strong>. Una <strong>expresión lambda</strong> es simplemente decir <strong>"pásame la sal"</strong>.</p></div>`,
+                codeExamples: `
+                    <div class="mentoring-section">
+                        <h4>Código Comentado Paso a Paso</h4>
+                        <p><strong>Ejemplo 1: Sintaxis variada de Lambdas</strong></p>
+                        <pre class="code-block"><code class="language-java">Runnable r1 = () -> System.out.println("Hola mundo");
+Function&lt;String, Integer&gt; f3 = s -> s.length();
+Comparator&lt;String&gt; c1 = (s1, s2) -> s1.compareTo(s2);
+Comparator&lt;String&gt; c2 = (s1, s2) -> {
+    System.out.println("Comparando...");
+    return s1.compareTo(s2);
+};</code></pre>
+                    </div>`,
+                commonMistakes: `<div class="antipatten-block"><h4>Errores Comunes y Anti-Patrones</h4><p><strong>Uso de variables no finales:</strong> El error más común es intentar modificar una variable local del método que contiene la lambda. Las lambdas pueden 'capturar' variables locales, pero estas deben ser \`final\` o 'efectivamente final'.</p></div>`,
+            },
+            {
+                id: 7,
+                title: "Clase 7: Referencias a Métodos",
+                mentoring: "Si una lambda solo llama a un método existente, podemos hacer nuestro código aún más limpio y expresivo usando una referencia a método. No es una nueva funcionalidad, es una mejora de legibilidad que le dice al lector exactamente qué método se está utilizando, sin distracciones.",
+                 detailedTheory: `
+                    <div class="mentoring-section">
+                        <h4>Teoría Detallada</h4>
+                        <p>A menudo, una expresión lambda simplemente llama a un método existente. Las Referencias a Métodos (introducidas con el operador \`::\`) son un atajo sintáctico para estos casos, haciendo el código más legible y conciso.</p>
+                        <h5 class="font-bold mt-4">1. Referencia a un Método Estático</h5>
+                        <p class="mt-2"><strong>Sintaxis:</strong> \`ClassName::staticMethodName\`</p>
+                        <h5 class="font-bold mt-4">2. Referencia a un Método de Instancia de un Objeto Particular</h5>
+                        <p class="mt-2"><strong>Sintaxis:</strong> \`instanceReference::instanceMethodName\`</p>
+                        <h5 class="font-bold mt-4">3. Referencia a un Método de Instancia de un Objeto Arbitrario</h5>
+                        <p class="mt-2"><strong>Sintaxis:</strong> \`ClassName::instanceMethodName\`</p>
+                        <h5 class="font-bold mt-4">4. Referencia a un Constructor</h5>
+                        <p class="mt-2"><strong>Sintaxis:</strong> \`ClassName::new\`</p>
+                    </div>`,
+                architectAnalogy: `<div class="analogy-block"><h4>Analogía del Arquitecto</h4><p>Si una lambda es decir "pásame la sal", una <strong>referencia a método</strong> es simplemente <strong>señalar la sal</strong>. El gesto es tan claro y directo que las palabras sobran.</p></div>`,
+                codeExamples: `
+                    <div class="mentoring-section">
+                        <h4>Código Comentado Paso a Paso</h4>
+                        <p><strong>Ejemplo de los 4 tipos de Referencias a Métodos</strong></p>
+                        <pre class="code-block"><code class="language-java">List&lt;String&gt; numerosComoTexto = Arrays.asList("1", "2", "3");
+List&lt;Integer&gt; numeros = numerosComoTexto.stream().map(Integer::parseInt).collect(Collectors.toList());
+List&lt;String&gt; saludos = Arrays.asList("Hola", "Mundo");
+saludos.forEach(System.out::println);
+List&lt;String&gt; nombres = Arrays.asList("ana", "beto");
+List&lt;String&gt; nombresMayus = nombres.stream().map(String::toUpperCase).collect(Collectors.toList());
+List&lt;String&gt; nombresParaPersonas = Arrays.asList("Ana", "Beto");
+List&lt;Persona&gt; personas = nombresParaPersonas.stream().map(Persona::new).collect(Collectors.toList());
+</code></pre>
+                    </div>`,
+                commonMistakes: `<div class="antipatten-block"><h4>Errores Comunes y Anti-Patrones</h4><p>Intentar usar una referencia a método cuando la lambda hace algo más que una simple llamada. Por ejemplo, \`s -> System.out.println("Procesando: " + s)\` no puede ser reemplazado por una referencia a método directamente.</p></div>`,
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabNav = document.getElementById('tab-navigation');
+            const classSelect = document.getElementById('class-select');
+            const contentArea = document.getElementById('content-area');
+
+            // --- 1. Populate UI ---
+            modulesData.forEach((module, index) => {
+                // Populate Desktop Nav
+                const button = document.createElement('button');
+                button.className = `tab-button w-full text-left p-3 rounded-md transition-colors duration-200 ${index === 0 ? 'active' : ''}`;
+                button.textContent = `Clase ${module.id}: ${module.title.split(': ')[1]}`;
+                button.dataset.target = `class-content-${module.id}`;
+                tabNav.appendChild(button);
+
+                // Populate Mobile Dropdown
+                const option = document.createElement('option');
+                option.value = `class-content-${module.id}`;
+                option.textContent = `Clase ${module.id}: ${module.title.split(': ')[1]}`;
+                classSelect.appendChild(option);
+
+                // Populate Content Area
+                const contentPanel = document.createElement('div');
+                contentPanel.id = `class-content-${module.id}`;
+                contentPanel.className = `content-panel ${index > 0 ? 'hidden' : ''}`;
+                contentPanel.innerHTML = `
+                    <h2 class="text-3xl font-bold text-[#2c2a29]">${module.title}</h2>
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <h3 class="font-bold text-md text-[#3f3c3a] mb-2">Mentoría del Arquitecto:</h3>
+                        <p class="text-sm text-[#6e6a67] italic">${module.mentoring}</p>
+                    </div>
+                    ${module.detailedTheory || ''}
+                    ${module.architectAnalogy || ''}
+                    ${module.codeExamples || ''}
+                    ${module.commonMistakes || ''}
+                    ${module.task ? `<div class="task-block">
+                        <h3 class="font-bold text-md text-[#3f3c3a]">🧠 Tarea Práctica Avanzada</h3>
+                        <p class="text-sm text-[#6e6a67] mt-2">${module.task}</p>
+                    </div>` : ''}
+                `;
+                contentArea.appendChild(contentPanel);
+            });
+
+            // --- 2. Add Event Listeners ---
+            function switchTab(targetId) {
+                // Hide all content panels
+                document.querySelectorAll('.content-panel').forEach(panel => {
+                    panel.classList.add('hidden');
+                });
+                // Deactivate all tab buttons
+                document.querySelectorAll('.tab-button').forEach(button => {
+                    button.classList.remove('active');
+                });
+
+                // Show target content panel
+                const targetPanel = document.getElementById(targetId);
+                if (targetPanel) {
+                    targetPanel.classList.remove('hidden');
+                }
+                
+                // Activate target tab button
+                const targetButton = document.querySelector(`.tab-button[data-target="${targetId}"]`);
+                if(targetButton) {
+                    targetButton.classList.add('active');
+                }
+
+                // Sync dropdown
+                classSelect.value = targetId;
+            }
+
+            // Desktop nav click
+            tabNav.addEventListener('click', (event) => {
+                const button = event.target.closest('.tab-button');
+                if (button) {
+                    switchTab(button.dataset.target);
+                }
+            });
+
+            // Mobile select change
+            classSelect.addEventListener('change', (event) => {
+                switchTab(event.target.value);
+            });
+
+        });
+    </script>
+
+</body>
+</html>
+
