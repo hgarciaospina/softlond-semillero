@@ -9,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.time.LocalDate;
+import java.util.function.Consumer;
 
 @SpringBootApplication
 public class NominaClinicaRhhApplication {
@@ -25,8 +26,19 @@ public class NominaClinicaRhhApplication {
 			System.out.println("👤 " + nombre + " -> ⏱ " + h + " hrs");
 		});
 
+		// -------------------------------------------------------------------------
+// 🧩 Ejercicio 2 – Empleados con Guardia
+// -------------------------------------------------------------------------
 		System.out.println("\n🛡 2) Empleados con guardia:");
-		rrHHService.empleadosConGuardia().forEach(nombre -> System.out.println("👮 " + nombre));
+
+// ✅ Implementación funcional pura del método empleadosConGuardia()
+//    El método ya retorna una lista con los nombres únicos, por lo que aquí
+//    simplemente se itera usando un Consumer funcional, sin bucles ni lógica imperativa.
+		Consumer<String> mostrarEmpleadoGuardia = nombre -> System.out.println("👮 " + nombre);
+
+// ✅ Aplicación del Consumer sobre cada elemento de la lista retornada
+		rrHHService.empleadosConGuardia().forEach(mostrarEmpleadoGuardia);
+
 
 		System.out.println("\n💰 3) Salario Ana:");
 		Empleado ana = rrHHService.getMapaPorId().get("E01");

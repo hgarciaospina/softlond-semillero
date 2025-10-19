@@ -54,12 +54,27 @@ class RRHHFunctionalServiceTest {
 	// 🔹 Test #2 - Empleados con guardias
 	// -------------------------------------------------------------------------
 	@Test
-	@DisplayName("Debe listar correctamente los empleados con turnos de guardia")
+	@DisplayName("🧩 [Ejercicio 2] - Debe listar correctamente los empleados con turnos de guardia (implementación funcional pura)")
 	void testEmpleadosConGuardia() {
+		// ✅ Se obtiene la lista de empleados con turnos de tipo GUARDIA
 		List<String> guardia = service.empleadosConGuardia();
-		assertNotNull(guardia);
-		assertTrue(guardia.contains("Luis Vera"));
-		assertEquals(1, guardia.size());
+
+		// 🔹 Validaciones principales
+		assertNotNull(guardia, "La lista no debe ser nula");
+		assertFalse(guardia.isEmpty(), "Debe existir al menos un empleado con guardias");
+
+		// 🔹 Validación de contenido
+		assertTrue(
+				guardia.stream().anyMatch(nombre -> nombre.equals("Luis Vera")),
+				"La lista debe contener al empleado 'Luis Vera'"
+		);
+
+		// 🔹 Validación de duplicados
+		long elementosUnicos = guardia.stream().distinct().count();
+		assertEquals(elementosUnicos, guardia.size(), "No deben existir nombres duplicados en la lista");
+
+		// 🔹 Validación de cantidad esperada (1 empleado con guardias en los datos base)
+		assertEquals(1, guardia.size(), "Solo un empleado (Luis Vera) tiene turnos de guardia");
 	}
 
 	// -------------------------------------------------------------------------

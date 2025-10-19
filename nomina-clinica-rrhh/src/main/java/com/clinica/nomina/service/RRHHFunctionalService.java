@@ -76,19 +76,47 @@ public class RRHHFunctionalService {
     }
 
     /**
-     * 2. Empleados con guardia.
+     * 🧩 Ejercicio 2 – Empleados con Guardia
+     * -------------------------------------
+     * Retorna una lista con los nombres únicos de empleados que realizaron al menos
+     * un turno de tipo GUARDIA. Se implementa de forma completamente funcional:
+     *
+     * 🚫 Sin if, for, while, stream, filter, ni Optional.
+     * ✅ Solo interfaces funcionales: Predicate, Function, Consumer, Supplier.
+     * ✅ Sin programación imperativa.
      */
     public List<String> empleadosConGuardia() {
-        List<RegistroTurno> copia = new ArrayList<>(registros);
-        copia.removeIf(r -> r.tipo() != TipoTurno.GUARDIA);
 
+        // 🧩 Predicado para identificar los registros de tipo GUARDIA
+        Predicate<RegistroTurno> esGuardia = r -> r.tipo().equals(TipoTurno.GUARDIA);
+
+        // 🧩 Función para obtener el ID del empleado a partir del registro
+        Function<RegistroTurno, String> obtenerId = RegistroTurno::idEmpleado;
+
+        // 🧩 Función para obtener el nombre del empleado a partir de su ID
+        Function<String, String> obtenerNombre = id -> mapaPorId.get(id).nombre();
+
+        // 🧩 Estructura de almacenamiento sin duplicados y con orden estable
         Set<String> ids = new LinkedHashSet<>();
-        copia.forEach(r -> ids.add(r.idEmpleado()));
 
-        List<String> nombres = new ArrayList<>();
-        ids.forEach(id -> nombres.add(mapaPorId.get(id).nombre()));
-        return nombres;
+        // 🧩 Consumer funcional: agrega el ID si cumple el predicado, sin usar "if"
+        Consumer<RegistroTurno> agregarSiGuardia = r ->
+                esGuardia.and(x -> ids.add(obtenerId.apply(x))).test(r);
+
+        // 🔁 Aplicar el Consumer a cada registro
+        registros.forEach(agregarSiGuardia);
+
+        // 🧩 Supplier que construye la lista final de nombres
+        Supplier<List<String>> construirResultado = () -> {
+            List<String> lista = new ArrayList<>();
+            ids.forEach(id -> lista.add(obtenerNombre.apply(id)));
+            return lista;
+        };
+
+        // ✅ Retornar resultado
+        return construirResultado.get();
     }
+
 
     /**
      * 3. Calcula salario mensual.
