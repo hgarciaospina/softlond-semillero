@@ -35,5 +35,15 @@ public class NominaClinicaStreamsApplication {
         reporteProductividad.imprimir();
 
         System.out.println("\n✅ Todos los reportes fueron generados exitosamente.");
+
+        // =============================================================
+        // 7️⃣ AUDITORÍA DE COBERTURA MÍNIMA (GUARDIA)
+        // =============================================================
+        AuditoriaCoberturaService auditoriaService = new AuditoriaCoberturaService(liquidacionService.obtenerNovedadesNomina());
+        ReporteAuditoriaCobertura reporteAuditoria = new ReporteAuditoriaCobertura(auditoriaService);
+        reporteAuditoria.imprimir();
+
+
     }
+
 }
