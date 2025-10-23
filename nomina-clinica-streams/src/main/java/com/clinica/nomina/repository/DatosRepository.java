@@ -36,7 +36,7 @@ public class DatosRepository {
             new RegistroTurno("E04", java.time.LocalDate.of(2025, 10, 3), TipoTurno.DIA, 8),
             new RegistroTurno("E02", java.time.LocalDate.of(2025, 10, 4), TipoTurno.GUARDIA, 24),
             new RegistroTurno("E05", java.time.LocalDate.of(2025, 10, 4), TipoTurno.NOCHE, 12),
-            new RegistroTurno("E06", java.time.LocalDate.of(2025, 10, 5), TipoTurno.GUARDIA, 24),
+            new RegistroTurno("E06", java.time.LocalDate.of(2025, 10, 5), TipoTurno.GUARDIA, 24), // (**)
             new RegistroTurno("E11", java.time.LocalDate.of(2025, 10, 5), TipoTurno.GUARDIA, 12), // Guardia de 12h
             new RegistroTurno("E09", java.time.LocalDate.of(2025, 10, 6), TipoTurno.DIA, 8),
             new RegistroTurno("E10", java.time.LocalDate.of(2025, 10, 6), TipoTurno.DIA, 8),
@@ -48,7 +48,7 @@ public class DatosRepository {
             new RegistroTurno("E14", java.time.LocalDate.of(2025, 10, 10), TipoTurno.DIA, 8),
             new RegistroTurno("E15", java.time.LocalDate.of(2025, 10, 11), TipoTurno.GUARDIA, 24),
             new RegistroTurno("E01", java.time.LocalDate.of(2025, 10, 11), TipoTurno.AUSENCIA, 0),
-            new RegistroTurno("E06", java.time.LocalDate.of(2025, 10, 12), TipoTurno.DIA, 8),
+            new RegistroTurno("E06", java.time.LocalDate.of(2025, 10, 6), TipoTurno.DIA, 8), // Día despues de guardia (**)
             new RegistroTurno("E09", java.time.LocalDate.of(2025, 10, 13), TipoTurno.NOCHE, 12),
             new RegistroTurno("E99", java.time.LocalDate.of(2025, 10, 13), TipoTurno.DIA, 8), // Empleado inexistente
             new RegistroTurno("E03", java.time.LocalDate.of(2025, 10, 14), TipoTurno.GUARDIA, 24),

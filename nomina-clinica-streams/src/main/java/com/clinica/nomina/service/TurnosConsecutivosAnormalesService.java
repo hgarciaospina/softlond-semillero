@@ -5,6 +5,7 @@ import com.clinica.nomina.model.TipoTurno;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Servicio que detecta turnos consecutivos anormales:
@@ -34,8 +35,9 @@ public class TurnosConsecutivosAnormalesService {
         return liquidacionService.obtenerNovedadesNomina().stream()
                 // Filtrar solo empleados válidos
                 .filter(n -> empleadosValidos.contains(n.idEmpleado()))
-                // Filtrar solo DIA o GUARDIA
-                .filter(n -> n.tipoTurno().equals(TipoTurno.DIA.name()) || n.tipoTurno().equals(TipoTurno.GUARDIA.name()))
+                // Filtrar solo DIA o GUARDIA de 24h
+                .filter(n -> n.tipoTurno().equals(TipoTurno.DIA.name()) ||
+                        (n.tipoTurno().equals(TipoTurno.GUARDIA.name()) && n.horasTrabajadas() == 24))
                 // Agrupar por idEmpleado
                 .collect(Collectors.groupingBy(NovedadesNomina::idEmpleado))
                 .entrySet().stream()
@@ -52,7 +54,9 @@ public class TurnosConsecutivosAnormalesService {
 
     /**
      * Verifica si la lista de NovedadesNomina de un empleado contiene
-     * una GUARDIA seguida inmediatamente por un DIA.
+     * una GUARDIA de 24 horas seguida inmediatamente por un DIA.
+     *
+     * Optimizado: solo un recorrido de la lista.
      */
     private boolean tieneTurnosAnormales(List<NovedadesNomina> turnosEmpleado) {
         // Ordenar por fecha
@@ -60,14 +64,15 @@ public class TurnosConsecutivosAnormalesService {
                 .sorted(Comparator.comparing(NovedadesNomina::fecha))
                 .toList();
 
-        // Detectar si hay GUARDIA seguida de DIA
-        return ordenados.stream()
-                .filter(n -> n.tipoTurno().equals(TipoTurno.GUARDIA.name()))
-                .anyMatch(guardia -> ordenados.stream()
-                        .anyMatch(dia ->
-                                dia.tipoTurno().equals(TipoTurno.DIA.name()) &&
-                                        dia.fecha().equals(guardia.fecha().plusDays(1)) &&
-                                        dia.idEmpleado().equals(guardia.idEmpleado())
-                        ));
+        // Usar IntStream para recorrer índices y comparar cada turno con el siguiente
+        return IntStream.range(0, ordenados.size() - 1)
+                .anyMatch(i -> {
+                    NovedadesNomina actual = ordenados.get(i);
+                    NovedadesNomina siguiente = ordenados.get(i + 1);
+                    return actual.tipoTurno().equals(TipoTurno.GUARDIA.name()) &&
+                            actual.horasTrabajadas() == 24 &&
+                            siguiente.tipoTurno().equals(TipoTurno.DIA.name()) &&
+                            siguiente.fecha().equals(actual.fecha().plusDays(1));
+                });
     }
 }
