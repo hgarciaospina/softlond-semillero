@@ -1,15 +1,12 @@
 package com.clinica.nomina;
 
-import com.clinica.nomina.model.Area;
+import com.clinica.nomina.model.ConsolidadoNovedadesNomina;
 import com.clinica.nomina.model.EmpleadoConBonus;
-import com.clinica.nomina.model.TipoTurno;
 import com.clinica.nomina.reportes.*;
 import com.clinica.nomina.repository.DatosRepository;
 import com.clinica.nomina.service.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Clase principal — Punto de entrada de la aplicación.
@@ -41,21 +38,8 @@ public class NominaClinicaStreamsApplication {
         // 3️⃣ DESGLOSE DE HORAS POR ÁREA Y TIPO DE TURNO
         // =============================================================
         DesgloseHorasPorAreaYTurnoService desgloseService = new DesgloseHorasPorAreaYTurnoService(liquidacionService);
-        Map<Area, Map<TipoTurno, Integer>> mapaDesgloseOriginal = desgloseService.calcularDesgloseHorasPorAreaYTipoTurno();
-
-        // Convertir a Map<String, Map<String, Double>> para el reporte
-        Map<String, Map<String, Double>> mapaDesglose = mapaDesgloseOriginal.entrySet().stream()
-                .collect(Collectors.toMap(
-                        e -> e.getKey().name(), // Area -> String
-                        e -> e.getValue().entrySet().stream()
-                                .collect(Collectors.toMap(
-                                        t -> t.getKey().name(),        // TipoTurno -> String
-                                        t -> t.getValue().doubleValue() // Integer -> Double
-                                ))
-                ));
-
         ReporteDesgloseHorasPorAreaYTurno reporteDesglose = new ReporteDesgloseHorasPorAreaYTurno();
-        reporteDesglose.imprimir(mapaDesglose);
+        reporteDesglose.imprimir(desgloseService.calcularDesgloseHorasPorAreaYTipoTurnoStringDouble());
 
         // =============================================================
         // 6️⃣ PRODUCTIVIDAD DE EMPLEADOS
@@ -74,14 +58,25 @@ public class NominaClinicaStreamsApplication {
         // =============================================================
         // 8️⃣ BONUS POR DISPONIBILIDAD
         // =============================================================
-        BonusDisponibilidadService bonusService = new BonusDisponibilidadService(
-                liquidacionService.obtenerNovedadesNomina(),
-                datosRepository.obtenerEmpleados(),
-                datosRepository.obtenerRegistrosMes()
-        );
-        List<EmpleadoConBonus> empleadosConBonus = bonusService.calcularBonus();
-        ReporteBonusDisponibilidad reporteBonus = new ReporteBonusDisponibilidad(empleadosConBonus);
+        List<ConsolidadoNovedadesNomina> consolidado = liquidacionService.calcularLiquidacionPorEmpleado();
+
+        // Imprime la lista principal de nómina
+        ReporteBonusDisponibilidad reporteBonus = new ReporteBonusDisponibilidad(consolidado);
+        System.out.println("\n📌 LISTA PRINCIPAL DE NÓMINA:");
         reporteBonus.imprimir();
+
+        // Genera y muestra la lista de empleados con bono
+        BonusDisponibilidadService bonusService = new BonusDisponibilidadService(consolidado);
+        List<EmpleadoConBonus> empleadosConBonus = bonusService.calcularBonus();
+
+        System.out.println("\n📌 EMPLEADOS CON BONO POR DISPONIBILIDAD:");
+        if (empleadosConBonus.isEmpty()) {
+            System.out.println("📌 No hay empleados que cumplan los criterios para recibir bono de disponibilidad.");
+        } else {
+            // Se imprime en tabla con todos los campos de EmpleadoConBonus
+            ReporteEmpleadosConBono reporteConBono = new ReporteEmpleadosConBono(empleadosConBonus);
+            reporteConBono.imprimir();
+        }
 
         System.out.println("\n✅ Todos los reportes fueron generados exitosamente.");
     }

@@ -30,21 +30,22 @@ public class ReporteLiquidacion {
         NumberFormat formato = liquidacionService.getFormatoMoneda();
 
         // --- Encabezado general ---
-        System.out.printf("%-8s %-25s %-18s %20s %20s %20s%n",
-                "ID", "Empleado", "Área", "Horas Trabajadas", "Valor Hora", "Total Devengado");
-        System.out.println("--------------------------------------------------------------------------------------------------------------");
+        System.out.printf("%-8s %-25s %-18s %20s %20s %20s %8s%n",
+                "ID", "Empleado", "Área", "Horas Trabajadas", "Valor Hora", "Total Devengado", "Bonus");
+        System.out.println("----------------------------------------------------------------------------------------------------------------");
 
         lista.forEach(liq -> System.out.printf(
-                "%-8s %-25s %-18s %20.2f %20s %20s%n",
+                "%-8s %-25s %-18s %20.2f %20s %20s %8s%n",
                 liq.idEmpleado(),
                 liq.nombreEmpleado(),
                 liq.area(),
                 liq.horasTrabajadas(),
                 formato.format(liq.salarioBaseHora()),
-                formato.format(liq.totalPagar())
+                formato.format(liq.totalPagar()),
+                liq.bonusDisponibilidad() ? "💰" : "❌"
         ));
 
-        System.out.println("--------------------------------------------------------------------------------------------------------------\n");
+        System.out.println("----------------------------------------------------------------------------------------------------------------\n");
 
         // --- Agrupado por área ---
         Map<String, List<ConsolidadoNovedadesNomina>> porArea = liquidacionService.agruparPorArea();
@@ -55,17 +56,18 @@ public class ReporteLiquidacion {
         porArea.forEach((area, empleados) -> {
             System.out.printf("\n🔹 Área: %s%n", area);
             System.out.println("────────────────────────────────────────────────────────────────────────────");
-            System.out.printf("%-8s %-25s %20s %20s %20s%n",
-                    "ID", "Nombres", "Horas Trabajadas", "Valor Hora", "Total Devengado");
+            System.out.printf("%-8s %-25s %20s %20s %20s %8s%n",
+                    "ID", "Nombres", "Horas Trabajadas", "Valor Hora", "Total Devengado", "Bonus");
             System.out.println("--------------------------------------------------------------------------------------");
 
             empleados.forEach(e -> System.out.printf(
-                    "%-8s %-25s %20.2f %20s %20s%n",
+                    "%-8s %-25s %20.2f %20s %20s %8s%n",
                     e.idEmpleado(),
                     e.nombreEmpleado(),
                     e.horasTrabajadas(),
                     formato.format(e.salarioBaseHora()),
-                    formato.format(e.totalPagar())
+                    formato.format(e.totalPagar()),
+                    e.bonusDisponibilidad() ? "💰" : "❌"
             ));
         });
 

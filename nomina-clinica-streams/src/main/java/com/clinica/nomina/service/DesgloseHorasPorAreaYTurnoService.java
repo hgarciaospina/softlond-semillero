@@ -55,8 +55,24 @@ public class DesgloseHorasPorAreaYTurnoService {
     }
 
     /**
+     * Método adicional: convierte el desglose a Map<String, Map<String, Double>>
+     * para ser compatible con el reporte.
+     */
+    public Map<String, Map<String, Double>> calcularDesgloseHorasPorAreaYTipoTurnoStringDouble() {
+        return calcularDesgloseHorasPorAreaYTipoTurno().entrySet().stream()
+                .collect(Collectors.toMap(
+                        e -> e.getKey().name(),
+                        e -> e.getValue().entrySet().stream()
+                                .collect(Collectors.toMap(
+                                        t -> t.getKey().name(),
+                                        t -> t.getValue().doubleValue()
+                                ))
+                ));
+    }
+
+    /**
      * Convierte un registro NovedadesNomina a un par ((Área, TipoTurno), horas) de forma funcional.
-     * Si el área o tipo de turno no son válidos, retorna Stream.empty().
+     * Si el área o tipo de turno no son válidos, retorna Optional.empty().
      */
     private Optional<Map.Entry<Map.Entry<Area, TipoTurno>, Double>> convertirRegistroSeguro(NovedadesNomina n) {
         return Optional.ofNullable(n)

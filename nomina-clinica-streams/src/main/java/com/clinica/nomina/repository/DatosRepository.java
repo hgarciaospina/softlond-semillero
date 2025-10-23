@@ -29,7 +29,7 @@ public class DatosRepository {
 
     private final List<RegistroTurno> registrosMes = List.of(
             new RegistroTurno("E01", java.time.LocalDate.of(2025, 10, 1), TipoTurno.NOCHE, 12),
-            new RegistroTurno("E02", java.time.LocalDate.of(2025, 10, 1), TipoTurno.DIA, 8),
+            new RegistroTurno("E02", java.time.LocalDate.of(2025, 10, 1), TipoTurno.DIA, 10),
             new RegistroTurno("E01", java.time.LocalDate.of(2025, 10, 2), TipoTurno.NOCHE, 12),
             new RegistroTurno("E03", java.time.LocalDate.of(2025, 10, 2), TipoTurno.DIA, 8),
             new RegistroTurno("E01", java.time.LocalDate.of(2025, 10, 3), TipoTurno.NOCHE, 12), // 3 noches seguidas para E01
@@ -52,7 +52,9 @@ public class DatosRepository {
             new RegistroTurno("E09", java.time.LocalDate.of(2025, 10, 13), TipoTurno.NOCHE, 12),
             new RegistroTurno("E99", java.time.LocalDate.of(2025, 10, 13), TipoTurno.DIA, 8), // Empleado inexistente
             new RegistroTurno("E03", java.time.LocalDate.of(2025, 10, 14), TipoTurno.GUARDIA, 24),
-            new RegistroTurno("E05", java.time.LocalDate.of(2025, 10, 15), TipoTurno.DIA, 8)
+            new RegistroTurno("E05", java.time.LocalDate.of(2025, 10, 15), TipoTurno.DIA, 8),
+            new RegistroTurno("E05", java.time.LocalDate.of(2025, 10, 17), TipoTurno.GUARDIA, 24)
+
     );
 
     public List<Empleado> obtenerEmpleados() {

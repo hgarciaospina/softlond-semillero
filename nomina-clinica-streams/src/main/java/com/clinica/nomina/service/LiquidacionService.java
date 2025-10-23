@@ -15,6 +15,7 @@ import static java.util.stream.Collectors.groupingBy;
  * consolidado por empleado cuando se requiera.
  *
  * ✅ Totalmente funcional, sin programación imperativa ni try/catch
+ * ✅ Lógica de bonusDisponibilidad: true solo si horasTrabajadas > 40 y sin AUSENCIA
  */
 public class LiquidacionService {
 
@@ -77,31 +78,24 @@ public class LiquidacionService {
 
     /**
      * Calcula el consolidado por empleado.
-     * Excluye registros de AUSENCIA.
-     * Totalmente funcional.
+     * Establece bonusDisponibilidad según reglas:
+     * true solo si horasTrabajadas > 40 y no tiene AUSENCIA.
      */
     public List<ConsolidadoNovedadesNomina> calcularLiquidacionPorEmpleado() {
 
-        // Map<idEmpleado, List<NovedadesNomina>> filtrando AUSENCIA de manera funcional
         Map<String, List<NovedadesNomina>> novedadesPorEmpleado = obtenerNovedadesNomina().stream()
-                .filter(n -> n.tipoTurno() != null &&
-                        Arrays.stream(TipoTurno.values())
-                                .anyMatch(t -> t.name().equalsIgnoreCase(n.tipoTurno()) && t != TipoTurno.AUSENCIA)
-                )
                 .collect(groupingBy(NovedadesNomina::idEmpleado));
 
         return empleados.stream()
                 .filter(Objects::nonNull)
-                .map(e -> novedadesPorEmpleado.getOrDefault(e.id(), Collections.emptyList()))
-                .filter(list -> !list.isEmpty())
-                .map(list -> {
-                    NovedadesNomina primerN = list.get(0);
+                .map(e -> {
+                    List<NovedadesNomina> novedades = novedadesPorEmpleado.getOrDefault(e.id(), Collections.emptyList());
 
-                    double horas = list.stream()
+                    double horas = novedades.stream()
                             .mapToDouble(NovedadesNomina::horasTrabajadas)
                             .sum();
 
-                    double totalPagar = list.stream()
+                    double totalPagar = novedades.stream()
                             .mapToDouble(n -> n.horasTrabajadas() * n.salarioBaseHora() *
                                     Arrays.stream(TipoTurno.values())
                                             .filter(t -> t.name().equalsIgnoreCase(n.tipoTurno()))
@@ -111,13 +105,24 @@ public class LiquidacionService {
                             )
                             .sum();
 
+                    // Determinar bonusDisponibilidad según regla nueva
+                    boolean tieneAusencia = novedades.stream()
+                            .anyMatch(n -> TipoTurno.AUSENCIA.name().equalsIgnoreCase(n.tipoTurno()));
+                    boolean bonusDisponibilidad = horas > 40 && !tieneAusencia;
+
+                    NovedadesNomina primerN = novedades.stream().findFirst().orElse(null);
+                    String nombre = primerN != null ? primerN.nombreEmpleado() : "DESCONOCIDO";
+                    String area = primerN != null ? primerN.area() : "SIN_AREA";
+                    double salarioBaseHora = primerN != null ? primerN.salarioBaseHora() : 0.0;
+
                     return new ConsolidadoNovedadesNomina(
-                            primerN.idEmpleado(),
-                            primerN.nombreEmpleado(),
-                            primerN.area(),
+                            e.id(),
+                            nombre,
+                            area,
                             horas,
-                            primerN.salarioBaseHora(),
-                            totalPagar
+                            salarioBaseHora,
+                            totalPagar,
+                            bonusDisponibilidad
                     );
                 })
                 .sorted(Comparator.comparingDouble(ConsolidadoNovedadesNomina::totalPagar).reversed())

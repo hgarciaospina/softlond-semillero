@@ -1,83 +1,57 @@
 package com.clinica.nomina.service;
 
-import com.clinica.nomina.model.*;
+import com.clinica.nomina.model.ConsolidadoNovedadesNomina;
+import com.clinica.nomina.model.EmpleadoConBonus;
+import com.clinica.nomina.model.Area;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Servicio que calcula el bonus por disponibilidad de los empleados.
+ * Servicio que calcula la lista de empleados que reciben bonus por disponibilidad
+ * a partir del consolidado de nómina.
  *
  * Regla:
- * - Empleados que no tuvieron ninguna AUSENCIA en el mes
- * - Y trabajaron más de 40 horas totales
- * - Bonus = 5% sobre el total devengado
+ * - bonusDisponibilidad = true en ConsolidadoNovedadesNomina
  */
 public class BonusDisponibilidadService {
 
-    private final List<NovedadesNomina> novedades;
-    private final List<RegistroTurno> registrosMes;
-    private final List<Empleado> empleados;
+    private final List<ConsolidadoNovedadesNomina> consolidado;
 
-    public BonusDisponibilidadService(List<NovedadesNomina> novedades,
-                                      List<Empleado> empleados,
-                                      List<RegistroTurno> registrosMes) {
-        this.novedades = novedades != null ? novedades : Collections.emptyList();
-        this.empleados = empleados != null ? empleados : Collections.emptyList();
-        this.registrosMes = registrosMes != null ? registrosMes : Collections.emptyList();
+    public BonusDisponibilidadService(List<ConsolidadoNovedadesNomina> consolidado) {
+        this.consolidado = consolidado;
     }
 
     /**
-     * Calcula la lista de empleados con bonus aplicable.
-     *
-     * @return lista de EmpleadoConBonus ordenada por totalConBonus descendente
+     * Genera la lista de EmpleadoConBonus con monto calculado (5% del totalPagar)
+     * solo para los empleados que tienen bonusDisponibilidad = true.
      */
     public List<EmpleadoConBonus> calcularBonus() {
-        // 1️⃣ IDs de empleados con alguna AUSENCIA
-        Set<String> empleadosConAusencia = registrosMes.stream()
-                .filter(r -> r.tipo() == TipoTurno.AUSENCIA)
-                .map(RegistroTurno::idEmpleado)
-                .collect(Collectors.toSet());
+        return consolidado.stream()
+                // Solo empleados que cumplen la regla
+                .filter(ConsolidadoNovedadesNomina::bonusDisponibilidad)
+                .map(c -> {
+                    double bonus = c.totalPagar() * 0.05;
+                    double totalConBonus = c.totalPagar() + bonus;
 
-        // 2️⃣ Filtrar novedades excluyendo empleados con AUSENCIA
-        List<NovedadesNomina> novedadesFiltradas = novedades.stream()
-                .filter(n -> !empleadosConAusencia.contains(n.idEmpleado()))
-                .collect(Collectors.toList());
-
-        // 3️⃣ Sumar horas y total devengado por empleado
-        Map<String, Double> horasPorEmpleado = novedadesFiltradas.stream()
-                .collect(Collectors.groupingBy(
-                        NovedadesNomina::idEmpleado,
-                        Collectors.summingDouble(NovedadesNomina::horasTrabajadas)
-                ));
-
-        Map<String, Double> totalDevengadoPorEmpleado = novedadesFiltradas.stream()
-                .collect(Collectors.groupingBy(
-                        NovedadesNomina::idEmpleado,
-                        Collectors.summingDouble(NovedadesNomina::totalPagar)
-                ));
-
-        // 4️⃣ Construir objetos EmpleadoConBonus
-        return empleados.stream()
-                .filter(e -> horasPorEmpleado.getOrDefault(e.id(), 0.0) > 40) // Solo los que trabajaron >40h
-                .map(e -> {
-                    double horas = horasPorEmpleado.getOrDefault(e.id(), 0.0);
-                    double totalDevengado = totalDevengadoPorEmpleado.getOrDefault(e.id(), 0.0);
-                    double bonus = totalDevengado * 0.05; // 5% bonus
-                    double totalConBonus = totalDevengado + bonus;
+                    // Conversión segura de String a Area enum
+                    Area areaEnum = Arrays.stream(Area.values())
+                            .filter(a -> a.name().equalsIgnoreCase(c.area()))
+                            .findFirst()
+                            .orElse(null); // null si no hay coincidencia
 
                     return new EmpleadoConBonus(
-                            e.id(),
-                            e.nombre(),
-                            e.area(),
-                            horas,
-                            e.salarioBaseHora(),
-                            totalDevengado,
+                            c.idEmpleado(),
+                            c.nombreEmpleado(),
+                            areaEnum,
+                            c.horasTrabajadas(),
+                            c.salarioBaseHora(),
+                            c.totalPagar(),
                             bonus,
                             totalConBonus
                     );
                 })
-                .sorted((a, b) -> Double.compare(b.totalConBonus(), a.totalConBonus()))
-                .toList();
+                .collect(Collectors.toList());
     }
 }

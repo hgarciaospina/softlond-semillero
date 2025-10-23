@@ -9,5 +9,6 @@ public record ConsolidadoNovedadesNomina(
         String area,
         double horasTrabajadas,
         double salarioBaseHora,
-        double totalPagar
+        double totalPagar,
+        boolean bonusDisponibilidad
 ) {}
