@@ -11,7 +11,8 @@ import java.util.Scanner;
 /**
  * Clase principal — Punto de entrada de la aplicación.
  *
- * Ahora con menú interactivo para ejecutar cada reporte individualmente.
+ * Ahora con menú interactivo para ejecutar cada reporte individualmente
+ * y pausa después de cada opción.
  */
 public class NominaClinicaStreamsApplication {
 
@@ -32,7 +33,6 @@ public class NominaClinicaStreamsApplication {
         BonusDisponibilidadService bonusService = new BonusDisponibilidadService(consolidado);
         TurnosConsecutivosAnormalesService turnosService = new TurnosConsecutivosAnormalesService(liquidacionService);
         InconsistenciasDatosService inconsistenciasService = new InconsistenciasDatosService(listaEmpleados, registrosMes);
-        //CostoOperativoService costoService = new CostoOperativoService(consolidado);
 
         ReporteLiquidacion reporteLiquidacion = new ReporteLiquidacion(liquidacionService);
         ReporteEmpleadoDelMes reporteEmpleadoDelMes = new ReporteEmpleadoDelMes(empleadoDelMesService);
@@ -43,7 +43,6 @@ public class NominaClinicaStreamsApplication {
         ReporteEmpleadosConBono reporteConBono = new ReporteEmpleadosConBono(bonusService.calcularBonus());
         ReporteTurnosConsecutivosAnormales reporteTurnosAnormales = new ReporteTurnosConsecutivosAnormales(turnosService);
         ReporteInconsistenciasDatos reporteInconsistencias = new ReporteInconsistenciasDatos(inconsistenciasService);
-       // ReporteCostoOperativo reporteCosto = new ReporteCostoOperativo(costoService);
 
         // 🔹 Menú interactivo
         Scanner scanner = new Scanner(System.in);
@@ -65,14 +64,31 @@ public class NominaClinicaStreamsApplication {
             System.out.println("0️⃣  Salir");
             System.out.print("Seleccione una opción: ");
 
+            // Leer opción y limpiar buffer
             opcion = scanner.nextInt();
+            scanner.nextLine(); // Limpiar el salto de línea pendiente
 
             switch (opcion) {
-                case 1 -> reporteLiquidacion.imprimir();
-                case 2 -> reporteEmpleadoDelMes.imprimir();
-                case 3 -> reporteDesglose.imprimir(desgloseService.calcularDesgloseHorasPorAreaYTipoTurnoStringDouble());
-                case 4 -> reporteProductividad.imprimir();
-                case 5 -> reporteAuditoria.imprimir();
+                case 1 -> {
+                    reporteLiquidacion.imprimir();
+                    esperarEnter(scanner);
+                }
+                case 2 -> {
+                    reporteEmpleadoDelMes.imprimir();
+                    esperarEnter(scanner);
+                }
+                case 3 -> {
+                    reporteDesglose.imprimir(desgloseService.calcularDesgloseHorasPorAreaYTipoTurnoStringDouble());
+                    esperarEnter(scanner);
+                }
+                case 4 -> {
+                    reporteProductividad.imprimir();
+                    esperarEnter(scanner);
+                }
+                case 5 -> {
+                    reporteAuditoria.imprimir();
+                    esperarEnter(scanner);
+                }
                 case 6 -> {
                     System.out.println("\n📌 LISTA PRINCIPAL DE NÓMINA:");
                     reporteBonus.imprimir();
@@ -82,18 +98,22 @@ public class NominaClinicaStreamsApplication {
                     } else {
                         reporteConBono.imprimir();
                     }
+                    esperarEnter(scanner);
                 }
                 case 7 -> {
                     System.out.println("\n📌 TURNOS CONSECUTIVOS ANORMALES:");
                     reporteTurnosAnormales.imprimir();
+                    esperarEnter(scanner);
                 }
                 case 8 -> {
                     System.out.println("\n📌 CHEQUEO DE INCONSISTENCIAS DE DATOS:");
                     reporteInconsistencias.imprimir();
+                    esperarEnter(scanner);
                 }
                 case 9 -> {
                     System.out.println("\n📌 COSTO OPERATIVO POR ÁREA:");
                     //reporteCosto.imprimir();
+                    esperarEnter(scanner);
                 }
                 case 0 -> System.out.println("🔹 Saliendo del sistema. ¡Hasta luego!");
                 default -> System.out.println("❌ Opción inválida, intente de nuevo.");
@@ -102,5 +122,10 @@ public class NominaClinicaStreamsApplication {
         } while (opcion != 0);
 
         scanner.close();
+    }
+
+    private static void esperarEnter(Scanner scanner) {
+        System.out.println("\nOprima <enter> para continuar...");
+        scanner.nextLine();
     }
 }
