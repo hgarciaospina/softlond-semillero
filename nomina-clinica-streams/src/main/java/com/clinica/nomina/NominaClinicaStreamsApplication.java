@@ -34,7 +34,9 @@ public class NominaClinicaStreamsApplication {
         // 3️⃣ DESGLOSE DE HORAS POR ÁREA Y TIPO DE TURNO
         // =============================================================
         DesgloseHorasPorAreaYTurnoService desgloseService = new DesgloseHorasPorAreaYTurnoService(liquidacionService);
-        ReporteDesgloseHorasPorAreaYTurno reporteDesglose = new ReporteDesgloseHorasPorAreaYTurno();
-        reporteDesglose.imprimir(desgloseService.calcularDesgloseHorasPorAreaYTipoTurno());
+        ReporteDesgloseHorasPorAreaYTurno reporteDesglose = new ReporteDesgloseHorasPorAreaYTurno(desgloseService);
+        reporteDesglose.imprimir();
+
+        System.out.println("\n✅ Todos los reportes fueron generados exitosamente.");
     }
 }
