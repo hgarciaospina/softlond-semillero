@@ -37,6 +37,13 @@ public class NominaClinicaStreamsApplication {
         ReporteDesgloseHorasPorAreaYTurno reporteDesglose = new ReporteDesgloseHorasPorAreaYTurno(desgloseService);
         reporteDesglose.imprimir();
 
+        // =============================================================
+        // 4️⃣ DETECCIÓN DE TURNOS CONSECUTIVOS ANORMALES
+        // =============================================================
+        TurnosConsecutivosAnormalesService turnosAnormalesService = new TurnosConsecutivosAnormalesService(liquidacionService);
+        ReporteTurnosConsecutivosAnormales reporteTurnosAnormales = new ReporteTurnosConsecutivosAnormales(turnosAnormalesService);
+        reporteTurnosAnormales.imprimir();
+
         System.out.println("\n✅ Todos los reportes fueron generados exitosamente.");
     }
 }
