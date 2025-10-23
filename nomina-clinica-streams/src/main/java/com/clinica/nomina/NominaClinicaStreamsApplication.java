@@ -7,7 +7,7 @@ import com.clinica.nomina.service.*;
 /**
  * Clase principal — Punto de entrada de la aplicación.
  *
- * Su responsabilidad es mínima: inicializar los servicios y ejecutar los reportes.
+ * Inicializa los servicios y ejecuta todos los reportes de nómina.
  */
 public class NominaClinicaStreamsApplication {
 
@@ -43,6 +43,14 @@ public class NominaClinicaStreamsApplication {
         TurnosConsecutivosAnormalesService turnosAnormalesService = new TurnosConsecutivosAnormalesService(liquidacionService);
         ReporteTurnosConsecutivosAnormales reporteTurnosAnormales = new ReporteTurnosConsecutivosAnormales(turnosAnormalesService);
         reporteTurnosAnormales.imprimir();
+
+        // =============================================================
+        // 5️⃣ CHEQUEO DE INCONSISTENCIAS DE DATOS
+        // =============================================================
+        InconsistenciasDatosService inconsistenciasService =
+                new InconsistenciasDatosService(datosRepository.obtenerEmpleados(), datosRepository.obtenerRegistrosMes());
+        ReporteInconsistenciasDatos reporteInconsistencias = new ReporteInconsistenciasDatos(inconsistenciasService);
+        reporteInconsistencias.imprimir();
 
         System.out.println("\n✅ Todos los reportes fueron generados exitosamente.");
     }
