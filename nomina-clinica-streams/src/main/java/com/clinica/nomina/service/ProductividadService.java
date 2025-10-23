@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  *
  * - Filtra solo turnos que existan en la lista de empleados
  * - Excluye AUSENCIA
- * - Aplica multiplicador por tipo de turno
+ * - Mantiene horas reales, sin multiplicar por ningún factor
  */
 public class ProductividadService {
 
@@ -20,13 +20,15 @@ public class ProductividadService {
     private final List<RegistroTurno> registrosMes;
 
     public ProductividadService(DatosRepository datosRepository) {
-        this.empleados = Optional.ofNullable(datosRepository.obtenerEmpleados()).orElse(Collections.emptyList());
-        this.registrosMes = Optional.ofNullable(datosRepository.obtenerRegistrosMes()).orElse(Collections.emptyList());
+        this.empleados = Optional.ofNullable(datosRepository.obtenerEmpleados())
+                .orElse(Collections.emptyList());
+        this.registrosMes = Optional.ofNullable(datosRepository.obtenerRegistrosMes())
+                .orElse(Collections.emptyList());
     }
 
     /**
      * Calcula la productividad de los empleados
-     * sumando horas ajustadas por multiplicador y calculando salario total.
+     * sumando horas reales y calculando salario total.
      */
     public List<ProductividadEmpleado> calcularProductividad() {
 
@@ -39,37 +41,24 @@ public class ProductividadService {
                 .filter(r -> mapEmpleados.containsKey(r.idEmpleado()))
                 // Filtrar turnos AUSENCIA
                 .filter(r -> r.tipo() != TipoTurno.AUSENCIA)
-                // Agrupar por idEmpleado sumando horas multiplicadas
+                // Agrupar por idEmpleado sumando horas reales
                 .collect(Collectors.groupingBy(
                         RegistroTurno::idEmpleado,
-                        Collectors.summingDouble(r -> r.horas() * getMultiplicador(r.tipo()))
+                        Collectors.summingDouble(RegistroTurno::horas)
                 ))
                 .entrySet().stream()
                 .map(entry -> {
                     Empleado e = mapEmpleados.get(entry.getKey());
-                    double totalHorasMultiplicadas = entry.getValue();
-                    double salarioTotal = totalHorasMultiplicadas * e.salarioBaseHora();
+                    double totalHoras = entry.getValue();
+                    double salarioTotal = totalHoras * e.salarioBaseHora(); // solo multiplicar por salario base
                     return new ProductividadEmpleado(
                             e.nombre(),
                             e.area(),
-                            (int) Math.round(totalHorasMultiplicadas),
+                            (int) Math.round(totalHoras),
                             salarioTotal
                     );
                 })
                 .sorted(Comparator.comparingDouble(ProductividadEmpleado::salarioTotal).reversed())
                 .toList();
-    }
-
-    /**
-     * Multiplicador por tipo de turno
-     */
-    private double getMultiplicador(TipoTurno tipo) {
-        if (tipo == null) return 1.0;
-        return switch (tipo) {
-            case GUARDIA -> 2.0;
-            case NOCHE -> 1.5;
-            case DIA -> 1.0;
-            default -> 1.0;
-        };
     }
 }

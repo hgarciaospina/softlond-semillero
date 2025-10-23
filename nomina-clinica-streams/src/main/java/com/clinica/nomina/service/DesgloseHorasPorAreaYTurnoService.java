@@ -5,7 +5,6 @@ import com.clinica.nomina.model.TipoTurno;
 import com.clinica.nomina.model.Area;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;

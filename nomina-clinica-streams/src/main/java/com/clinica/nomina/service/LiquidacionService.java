@@ -13,6 +13,8 @@ import static java.util.stream.Collectors.groupingBy;
  * Servicio encargado de construir la lista de NovedadesNomina
  * (base para varios reportes) y adicionalmente producir
  * consolidado por empleado cuando se requiera.
+ *
+ * ✅ Totalmente funcional, sin programación imperativa ni try/catch
  */
 public class LiquidacionService {
 
@@ -21,47 +23,50 @@ public class LiquidacionService {
     private final NumberFormat formatoMoneda;
 
     public LiquidacionService(DatosRepository datosRepository) {
-        this.empleados = Optional.ofNullable(datosRepository.obtenerEmpleados()).orElse(Collections.emptyList());
-        this.registrosMes = Optional.ofNullable(datosRepository.obtenerRegistrosMes()).orElse(Collections.emptyList());
+        this.empleados = Optional.ofNullable(datosRepository.obtenerEmpleados())
+                .orElse(Collections.emptyList());
+        this.registrosMes = Optional.ofNullable(datosRepository.obtenerRegistrosMes())
+                .orElse(Collections.emptyList());
         this.formatoMoneda = NumberFormat.getCurrencyInstance(new Locale("es", "CO"));
     }
 
     /**
      * Reconstruye la lista de NovedadesNomina a partir de los registros del mes
      * y la información de empleados.
-     *
-     * - Incluye AUSENCIA como tipo (pero puede ser filtrada por los servicios consumidores).
-     * - El campo area y tipoTurno en NovedadesNomina se llenan con los nombres del enum (o "SIN_AREA"/"DESCONOCIDO").
      */
     public List<NovedadesNomina> obtenerNovedadesNomina() {
         return registrosMes.stream()
-                .filter(Objects::nonNull)
-                .filter(r -> r.idEmpleado() != null)
-                .map(r -> {
-                    Empleado e = empleados.stream()
-                            .filter(emp -> emp != null && emp.id() != null && emp.id().equals(r.idEmpleado()))
-                            .findFirst()
-                            .orElse(null);
+                .filter(r -> r != null && r.idEmpleado() != null)
+                .map(r -> empleados.stream()
+                        .filter(e -> e != null && e.id() != null && e.id().equals(r.idEmpleado()))
+                        .findFirst()
+                        .map(e -> {
+                            double salarioHora = e.salarioBaseHora();
+                            double multiplicador = getMultiplicador(r.tipo());
+                            double totalPagar = r.horas() * salarioHora * multiplicador;
 
-                    double salarioHora = e != null ? e.salarioBaseHora() : 0.0;
-                    double multiplicador = getMultiplicador(r.tipo());
-                    double totalPagar = r.horas() * salarioHora * multiplicador;
-
-                    String areaStr = (e != null && e.area() != null) ? e.area().name() : "SIN_AREA";
-                    String tipoStr = (r.tipo() != null) ? r.tipo().name() : "DESCONOCIDO";
-                    String nombre = (e != null) ? e.nombre() : "DESCONOCIDO";
-
-                    return new NovedadesNomina(
-                            r.idEmpleado(),
-                            nombre,
-                            areaStr,
-                            tipoStr,
-                            r.fecha(),
-                            r.horas(),
-                            salarioHora,
-                            totalPagar
-                    );
-                })
+                            return new NovedadesNomina(
+                                    r.idEmpleado(),
+                                    Optional.ofNullable(e.nombre()).orElse("DESCONOCIDO"),
+                                    Optional.ofNullable(e.area()).map(Area::name).orElse("SIN_AREA"),
+                                    Optional.ofNullable(r.tipo()).map(TipoTurno::name).orElse("DESCONOCIDO"),
+                                    r.fecha(),
+                                    r.horas(), // horas reales
+                                    salarioHora,
+                                    totalPagar
+                            );
+                        })
+                        .orElse(new NovedadesNomina(
+                                r.idEmpleado(),
+                                "DESCONOCIDO",
+                                "SIN_AREA",
+                                Optional.ofNullable(r.tipo()).map(TipoTurno::name).orElse("DESCONOCIDO"),
+                                r.fecha(),
+                                r.horas(),
+                                0.0,
+                                0.0
+                        ))
+                )
                 .sorted(Comparator
                         .comparing(NovedadesNomina::fecha)
                         .thenComparing(NovedadesNomina::area)
@@ -71,42 +76,47 @@ public class LiquidacionService {
     }
 
     /**
-     * Calcula el consolidado por empleado (lista de ConsolidadoNovedadesNomina)
-     * a partir de las NovedadesNomina. Excluye registros de AUSENCIA.
-     *
-     * Este método mantiene compatibilidad con los reportes existentes.
+     * Calcula el consolidado por empleado.
+     * Excluye registros de AUSENCIA.
+     * Totalmente funcional.
      */
     public List<ConsolidadoNovedadesNomina> calcularLiquidacionPorEmpleado() {
-        Map<String, Double> horasAjustadasPorEmpleado = obtenerNovedadesNomina().stream()
-                .filter(n -> {
-                    try {
-                        TipoTurno t = TipoTurno.valueOf(n.tipoTurno());
-                        return t != TipoTurno.AUSENCIA;
-                    } catch (Exception ex) {
-                        return true;
-                    }
-                })
-                .collect(groupingBy(
-                        NovedadesNomina::idEmpleado,
-                        Collectors.summingDouble(n -> n.horasTrabajadas() * getMultiplicadorSafely(n.tipoTurno()))
-                ));
+
+        // Map<idEmpleado, List<NovedadesNomina>> filtrando AUSENCIA de manera funcional
+        Map<String, List<NovedadesNomina>> novedadesPorEmpleado = obtenerNovedadesNomina().stream()
+                .filter(n -> n.tipoTurno() != null &&
+                        Arrays.stream(TipoTurno.values())
+                                .anyMatch(t -> t.name().equalsIgnoreCase(n.tipoTurno()) && t != TipoTurno.AUSENCIA)
+                )
+                .collect(groupingBy(NovedadesNomina::idEmpleado));
 
         return empleados.stream()
                 .filter(Objects::nonNull)
-                .filter(e -> e.id() != null && horasAjustadasPorEmpleado.containsKey(e.id()))
-                .map(e -> {
-                    double horas = horasAjustadasPorEmpleado.getOrDefault(e.id(), 0.0);
-                    double salarioHora = e.salarioBaseHora();
-                    double totalPagar = horas * salarioHora;
-                    String area = e.area() != null ? e.area().name() : "SIN_AREA";
-                    String nombre = e.nombre() != null ? e.nombre() : "SIN_NOMBRE";
+                .map(e -> novedadesPorEmpleado.getOrDefault(e.id(), Collections.emptyList()))
+                .filter(list -> !list.isEmpty())
+                .map(list -> {
+                    NovedadesNomina primerN = list.get(0);
+
+                    double horas = list.stream()
+                            .mapToDouble(NovedadesNomina::horasTrabajadas)
+                            .sum();
+
+                    double totalPagar = list.stream()
+                            .mapToDouble(n -> n.horasTrabajadas() * n.salarioBaseHora() *
+                                    Arrays.stream(TipoTurno.values())
+                                            .filter(t -> t.name().equalsIgnoreCase(n.tipoTurno()))
+                                            .findFirst()
+                                            .map(this::getMultiplicador)
+                                            .orElse(1.0)
+                            )
+                            .sum();
 
                     return new ConsolidadoNovedadesNomina(
-                            e.id(),
-                            nombre,
-                            area,
+                            primerN.idEmpleado(),
+                            primerN.nombreEmpleado(),
+                            primerN.area(),
                             horas,
-                            salarioHora,
+                            primerN.salarioBaseHora(),
                             totalPagar
                     );
                 })
@@ -115,7 +125,7 @@ public class LiquidacionService {
     }
 
     /**
-     * Agrupa el consolidado por área, útil para reportes por departamento.
+     * Agrupa el consolidado por área.
      */
     public Map<String, List<ConsolidadoNovedadesNomina>> agruparPorArea() {
         return calcularLiquidacionPorEmpleado().stream()
@@ -129,22 +139,14 @@ public class LiquidacionService {
     /* --- Helpers --- */
 
     private double getMultiplicador(TipoTurno tipo) {
-        if (tipo == null) return 1.0;
-        return switch (tipo) {
-            case GUARDIA -> 2.0;
-            case NOCHE -> 1.5;
-            case AUSENCIA -> 0.0;
-            default -> 1.0;
-        };
-    }
-
-    private double getMultiplicadorSafely(String tipoStr) {
-        if (tipoStr == null) return 1.0;
-        try {
-            return getMultiplicador(TipoTurno.valueOf(tipoStr));
-        } catch (Exception ex) {
-            return 1.0;
-        }
+        return Optional.ofNullable(tipo)
+                .map(t -> switch (t) {
+                    case GUARDIA -> 2.0;
+                    case NOCHE -> 1.5;
+                    case AUSENCIA -> 0.0;
+                    default -> 1.0;
+                })
+                .orElse(1.0);
     }
 
     public NumberFormat getFormatoMoneda() {
